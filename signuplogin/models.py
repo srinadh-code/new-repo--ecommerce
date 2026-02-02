@@ -1,17 +1,3 @@
-# from django.db import models
-
-# class signup(models.Model):
-#     username=models.CharField(max_length=100)
-#     email=models.EmailField(max_length=254,unique=True)
-#     password=models.CharField(max_length=254)
-    
-#     reset_otp=models.CharField(max_length=6,blank=True,null=True)
-#     otp_created_at=models.DateTimeField(blank=True,null=True)
-    
-#     def __str__(self):
-#         return self.name
-        
-    
 from django.db import models
 from django.utils import timezone
 
@@ -33,7 +19,7 @@ class PasswordResetOTP(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.otp}"
-from django.db import models
+
 
 class Banner(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
