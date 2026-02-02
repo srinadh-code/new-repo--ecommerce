@@ -17,7 +17,8 @@ from .views import (
     VerifyOtpView,
     ResetPasswordView,
     splash_page,
-    dashboard_page
+    
+    dashboard_page, category_products
 
     
 )
@@ -31,5 +32,7 @@ urlpatterns = [
     path("reset-password/", ResetPasswordView.as_view()),
     path("splash/", splash_page, name="splash"),
     path("dashboard/", dashboard_page, name="dashboard"),
+    path("category/<int:cat_id>/", category_products, name="category_products"),
+    
 
 ]

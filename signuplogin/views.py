@@ -265,5 +265,14 @@ from django.shortcuts import render
 def dashboard_page(request):
     return render(request, "dashboard.html")
 
+from django.shortcuts import render
+from .models import Category,Product
 
+def dashboard_page(request):
+    categories = Category.objects.all()
+    return render(request, "dashboard.html", {"categories": categories})
 
+def category_products(request, cat_id):
+    category = Category.objects.get(id=cat_id)
+    products = Product.objects.filter(category=category)
+    return render(request, "category_products.html", {"category": category, "products": products})
