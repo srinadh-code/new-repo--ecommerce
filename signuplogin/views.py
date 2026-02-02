@@ -18,7 +18,7 @@ from .serializers import (
 from rest_framework.permissions import  AllowAny
 
 
-# ✅ Signup
+# Signup
 class SignupView(APIView):
     permission_classes=[AllowAny]
     def post(self, request):
