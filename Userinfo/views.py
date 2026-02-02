@@ -23,6 +23,7 @@ class ProfileView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        
         if Profile.objects.filter(user=request.user).exists():
             return Response(
                 {"detail": "Profile already exists"},

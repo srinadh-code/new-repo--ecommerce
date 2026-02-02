@@ -154,9 +154,6 @@ def splash_page(request):
     return render(request, "splash.html")
 
 
-def dashboard_page(request):
-    return render(request, "dashboard.html")
-
 from django.shortcuts import render
 from .models import Category,Product
 
