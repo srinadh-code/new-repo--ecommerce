@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html>
 <head>
     <title>Dashboard</title>
@@ -32,6 +32,70 @@
 <body>
 
 <div class="header"> wlecome to ecommerce</div>
+
+<div class="container">
+
+    <h2>Categories</h2>
+    <div class="categories">
+        {% for cat in categories %}
+            <a href="{% url 'category_products' cat.id %}">
+                <button class="cat-btn">{{ cat.name }}</button>
+            </a>
+        {% endfor %}
+    </div>
+
+</div>
+
+</body>
+</html> {% endcomment %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body{font-family: Arial; margin:0; background:#f4f4f4;}
+
+        .header{
+            background:#111;
+            color:white;
+            padding:15px 30px;
+            font-size:20px;
+        }
+
+        .container{padding:25px;}
+
+        .categories{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .cat-btn{
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+        }
+
+        .cat-btn:hover{
+            background: orange;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    ✅ Welcome to Ecommerce
+
+    <a href="{% url 'profile_page' %}"
+       style="float:right; color:white; text-decoration:none; font-size:16px;">
+        👤 Profile
+    </a>
+</div>
 
 <div class="container">
 

@@ -3,24 +3,56 @@ from django.contrib.auth.hashers import make_password
 from .models import Signup
 
 
+# class SignupSerializer(serializers.ModelSerializer):
+#     password = serializers.CharField(write_only=True)
+
+#     class Meta:
+#         model = Signup
+#         fields = ["id", "username", "email", "password"]
+
+#     def validate_password(self, value):
+#         special_chars = ["@", "&", "*","!","#","^","$"]
+#         if not any(ch in value for ch in special_chars):
+#             raise serializers.ValidationError("Weak password.ad  any special character")
+#         return value
+
+#     def create(self, validated_data):
+#         validated_data["password"] = make_password(validated_data["password"])
+#         return super().create(validated_data)
+    
+from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
+from .models import Signup
+
+
 class SignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)   #  new field
 
     class Meta:
         model = Signup
-        fields = ["id", "username", "email", "password"]
+        fields = ["id", "username", "email", "password", "confirm_password"]
 
     def validate_password(self, value):
-        special_chars = ["@", "&", "*","!","#","^","$"]
+        special_chars = ["@", "&", "*", "!", "#", "^", "$"]
         if not any(ch in value for ch in special_chars):
-            raise serializers.ValidationError("Weak password.ad  any special character")
+            raise serializers.ValidationError("Weak password. Add any special character")
         return value
 
+    def validate(self, data):
+        #  check both passwords match
+        if data["password"] != data["confirm_password"]:
+            raise serializers.ValidationError({"confirm_password": "Passwords do not match"})
+        return data
+
     def create(self, validated_data):
+        # remove confirm_password before saving
+        validated_data.pop("confirm_password")
+
+        #  hash password before saving
         validated_data["password"] = make_password(validated_data["password"])
         return super().create(validated_data)
-    
-    
+
 
 
 

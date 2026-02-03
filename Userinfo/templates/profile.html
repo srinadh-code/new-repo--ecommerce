@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <style>
+        body{font-family:Arial; background:#f4f4f4; margin:0;}
+        .box{
+            width:420px;
+            margin:80px auto;
+            background:white;
+            padding:30px;
+            border-radius:12px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.2);
+        }
+        input{
+            width:100%;
+            padding:12px;
+            margin:10px 0;
+            border-radius:8px;
+            border:1px solid #ccc;
+        }
+        button{
+            width:100%;
+            padding:12px;
+            background:orange;
+            border:none;
+            border-radius:8px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+        button:hover{background:darkorange;}
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2> My Profile</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="full_name" placeholder="Full Name"
+               value="{% if profile %}{{ profile.full_name }}{% endif %}" required>
+
+        <input type="text" name="phone_number" placeholder="Phone Number"
+               value="{% if profile %}{{ profile.phone_number }}{% endif %}" required>
+
+        <button type="submit">
+            {% if profile %}Update Profile{% else %}Create Profile{% endif %}
+        </button>
+    </form>
+</div>
+
+</body>
+</html>

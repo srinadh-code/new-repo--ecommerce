@@ -18,16 +18,16 @@ from .serializers import (
 from rest_framework.permissions import  AllowAny
 
 
-# Signup
+
 class SignupView(APIView):
-    permission_classes=[AllowAny]
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"msg": "Signup successful"}, status=status.HTTP_201_CREATED)
+            return redirect("dashboard") 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 #  Login
 class LoginView(APIView):
@@ -52,7 +52,7 @@ class LoginView(APIView):
 
 #  Forgot Password (Send OTP)
 class ForgotPasswordView(APIView):
-    permission_classes=[AllowAny]
+   
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
         if serializer.is_valid():
@@ -85,7 +85,7 @@ class ForgotPasswordView(APIView):
 
 #  Verify OTP Only
 class VerifyOtpView(APIView):
-    permission_classes=[AllowAny]
+
     def post(self, request):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
@@ -114,7 +114,7 @@ class VerifyOtpView(APIView):
 
 #  Reset Password (Only if OTP verified)
 class ResetPasswordView(APIView):
-    permission_classes=[AllowAny]
+    
     def post(self, request):
         serializer = ResetPasswordSerializer(data=request.data)
         if serializer.is_valid():
