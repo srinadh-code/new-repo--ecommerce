@@ -6,3 +6,7 @@ urlpatterns=[
     path('resetpassword/',ResetPasswordView.as_view()),
 
 ]
+
+
+
+

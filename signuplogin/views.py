@@ -19,16 +19,19 @@ from rest_framework.permissions import  AllowAny
 
 
 
+<<<<<<< HEAD
 # ✅ Signup
+=======
+>>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
 class SignupView(APIView):
-    permission_classes=[AllowAny]
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"msg": "Signup successful"}, status=status.HTTP_201_CREATED)
+            return redirect("dashboard") 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 #  Login
 class LoginView(APIView):
@@ -52,9 +55,14 @@ class LoginView(APIView):
 
 #  Forgot Password (Send OTP)
 class ForgotPasswordView(APIView):
+<<<<<<< HEAD
+=======
+   
+>>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
         if serializer.is_valid():
+            
             email = serializer.validated_data["email"]
 
             user = Signup.objects.filter(email=email).first()
@@ -83,6 +91,10 @@ class ForgotPasswordView(APIView):
 
 #  Verify OTP Only
 class VerifyOtpView(APIView):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
     def post(self, request):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
@@ -111,7 +123,7 @@ class VerifyOtpView(APIView):
 
 #  Reset Password (Only if OTP verified)
 class ResetPasswordView(APIView):
-    permission_classes=[AllowAny]
+    
     def post(self, request):
         serializer = ResetPasswordSerializer(data=request.data)
         if serializer.is_valid():
@@ -151,7 +163,11 @@ def splash_page(request):
     return render(request, "splash.html")
 
 
+from django.shortcuts import render
+from .models import Category,Product
+
 def dashboard_page(request):
+<<<<<<< HEAD
     return render(request, "dashboard.html")
 
 
@@ -164,4 +180,12 @@ def dashboard_page(request):
 #     print(hasher.algorithm)
 
 
+=======
+    categories = Category.objects.all()
+    return render(request, "dashboard.html", {"categories": categories})
+>>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
 
+def category_products(request, cat_id):
+    category = Category.objects.get(id=cat_id)
+    products = Product.objects.filter(category=category)
+    return render(request, "category_products.html", {"category": category, "products": products})
