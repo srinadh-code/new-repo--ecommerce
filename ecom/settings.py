@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'signuplogin',
+    'cart',
     'rest_framework',
 ]
 
@@ -146,3 +147,4 @@ REST_FRAMEWORK = {
     ],
 }
 
+LOGIN_URL = '/login/'

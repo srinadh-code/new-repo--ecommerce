@@ -33,6 +33,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include("signuplogin.urls")),
+    path('',include('cart.urls')),
     
 ]
 if settings.DEBUG:
