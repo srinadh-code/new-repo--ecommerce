@@ -154,17 +154,7 @@ def splash_page(request):
 from django.shortcuts import render
 from .models import Category,Product
 
-def dashboard_page(request):
-    return render(request, "dashboard.html")
 
-
-# def hashing(request):
-#     serializer = LoginSerializer(data=request.data)
-#     if serializer.is_valid():
-#             username = serializer.validated_data["username"]
-#     user = Signup.objects.filter(username=username).first()
-#     hasher=identify_hasher(user.password)
-#     print(hasher.algorithm)
 
 
 
@@ -172,3 +162,8 @@ def category_products(request, cat_id):
     category = Category.objects.get(id=cat_id)
     products = Product.objects.filter(category=category)
     return render(request, "category_products.html", {"category": category, "products": products})
+from .models import Category
+
+def dashboard_page(request):
+    categories = Category.objects.all()
+    return render(request, "dashboard.html", {"categories": categories})
