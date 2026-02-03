@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.shortcuts import redirect,render
 from django.core.mail import send_mail
 from django.utils import timezone
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import check_password, make_password,identify_hasher
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -16,6 +16,7 @@ from .serializers import (
     ResetPasswordSerializer
 )
 from rest_framework.permissions import  AllowAny
+
 
 
 # ✅ Signup
@@ -39,7 +40,6 @@ class LoginView(APIView):
             password = serializer.validated_data["password"]
 
             user = Signup.objects.filter(username=username).first()
-
             if user and check_password(password, user.password):
                 return redirect("splash")
                 # return Response({"msg": "Login successful"}, status=status.HTTP_200_OK)
@@ -52,7 +52,6 @@ class LoginView(APIView):
 
 #  Forgot Password (Send OTP)
 class ForgotPasswordView(APIView):
-    permission_classes=[AllowAny]
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
         if serializer.is_valid():
@@ -84,7 +83,6 @@ class ForgotPasswordView(APIView):
 
 #  Verify OTP Only
 class VerifyOtpView(APIView):
-    permission_classes=[AllowAny]
     def post(self, request):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
@@ -155,6 +153,15 @@ def splash_page(request):
 
 def dashboard_page(request):
     return render(request, "dashboard.html")
+
+
+# def hashing(request):
+#     serializer = LoginSerializer(data=request.data)
+#     if serializer.is_valid():
+#             username = serializer.validated_data["username"]
+#     user = Signup.objects.filter(username=username).first()
+#     hasher=identify_hasher(user.password)
+#     print(hasher.algorithm)
 
 
 
