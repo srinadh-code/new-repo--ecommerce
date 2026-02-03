@@ -1,14 +1,3 @@
-# from.views import signupview,loginview,forgotpasswordview,resetpasswordview
-# from django.urls import path
-# urlpatterns = [    
-#     path("",signupview.as_view(),name="signup"),
-#     path("login/",loginview.as_view(),name="login"),
-#     path("forgot/",forgotpasswordview.as_view(),name="forgot"),
-#     path("reset/",resetpasswordview.as_view(),name="reset"),
-    
-# ]
-
-
 from django.urls import path
 from .views import (
     SignupView,
@@ -17,10 +6,14 @@ from .views import (
     VerifyOtpView,
     ResetPasswordView,
     splash_page,
+<<<<<<< HEAD
+    dashboard_page
+=======
     
     dashboard_page, category_products
 
     
+>>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
 )
 
 urlpatterns = [
