@@ -5,7 +5,5 @@ from .models import Category, Product
 class BannerAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "is_active")
 
-
-
 admin.site.register(Category)
 admin.site.register(Product)
