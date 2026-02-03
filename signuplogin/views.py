@@ -19,10 +19,7 @@ from rest_framework.permissions import  AllowAny
 
 
 
-<<<<<<< HEAD
 # ✅ Signup
-=======
->>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
 class SignupView(APIView):
     permission_classes = [AllowAny]
 
@@ -45,8 +42,7 @@ class LoginView(APIView):
             user = Signup.objects.filter(username=username).first()
             if user and check_password(password, user.password):
                 return redirect("splash")
-                # return Response({"msg": "Login successful"}, status=status.HTTP_200_OK)
-                
+               
 
             return Response({"msg": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -55,10 +51,6 @@ class LoginView(APIView):
 
 #  Forgot Password (Send OTP)
 class ForgotPasswordView(APIView):
-<<<<<<< HEAD
-=======
-   
->>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
         if serializer.is_valid():
@@ -91,10 +83,6 @@ class ForgotPasswordView(APIView):
 
 #  Verify OTP Only
 class VerifyOtpView(APIView):
-<<<<<<< HEAD
-=======
-
->>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
     def post(self, request):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
@@ -167,7 +155,6 @@ from django.shortcuts import render
 from .models import Category,Product
 
 def dashboard_page(request):
-<<<<<<< HEAD
     return render(request, "dashboard.html")
 
 
@@ -180,10 +167,6 @@ def dashboard_page(request):
 #     print(hasher.algorithm)
 
 
-=======
-    categories = Category.objects.all()
-    return render(request, "dashboard.html", {"categories": categories})
->>>>>>> 87a67149c320f366d3735b7f01833ff206cfda58
 
 def category_products(request, cat_id):
     category = Category.objects.get(id=cat_id)
