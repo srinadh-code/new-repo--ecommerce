@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders</title>
+    <style>
+        body{font-family:Arial;margin:0;background:#f4f4f4;}
+        .header{background:#111;color:white;padding:15px 30px;font-size:20px;}
+        .container{padding:25px;}
+        .order{
+            background:white;
+            padding:15px;
+            margin-bottom:15px;
+            border-radius:12px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.15);
+        }
+        .item{
+            padding:6px 0;
+            border-bottom:1px solid #eee;
+        }
+        .btn{
+            padding:10px 14px;
+            background:black;
+            color:white;
+            text-decoration:none;
+            border-radius:6px;
+            display:inline-block;
+        }
+        .btn:hover{background:orange;color:black;}
+    </style>
+</head>
+{% comment %} <h2>My Orders</h2> {% endcomment %}
+{% comment %} <p>No orders yet.</p> {% endcomment %}
+
+{% comment %} <a href="/settings/">Back</a> {% endcomment %}
+<body>
+
+<div class="header">📦 My Orders</div>
+
+<div class="container">
+
+    <a class="btn" href="/dashboard/">⬅ Back to Dashboard</a>
+    <br><br>
+
+    {% for order in orders %}
+        <div class="order">
+            <h3>Order ID: {{ order.id }}</h3>
+            <p>Status: {{ order.status }}</p>
+            <p>Total: ₹{{ order.total_amount }}</p>
+            <p>Date: {{ order.created_at }}</p>
+
+            <h4>Items:</h4>
+            {% for item in order.items.all %}
+                <div class="item">
+                    {{ item.product.name }} | Qty: {{ item.quantity }} | ₹{{ item.unit_price }}
+                </div>
+            {% endfor %}
+
+            <a href="{% url 'delete_order' order.id %}"
+         style="display:inline-block; padding:6px 10px; background:red; color:white; border-radius:8px; text-decoration:none;">
+          Delete
+      </a>
+        </div>
+    {% empty %}
+        <h3>No orders yet.</h3>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

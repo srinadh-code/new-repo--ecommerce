@@ -1,0 +1,23 @@
+<h2>Settings</h2>
+
+<form method="post" action="{% url 'set_language' %}">
+    {% csrf_token %}
+    <label>Select Language:</label>
+
+    <select name="language">
+        <option value="en">English</option>
+        <option value="te">Telugu</option>
+        <option value="hi">Hindi</option>
+    </select>
+
+    <button type="submit">Save</button>
+</form>
+
+<hr>
+
+<ul>
+    <li><a href="{% url 'my_orders' %}">My Orders</a></li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+</ul>
+
+<a href="/dashboard/">⬅ Back</a>

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +6,7 @@
     <style>
         body{font-family:Arial;margin:0;background:#f4f4f4;}
         .header{background:#111;color:white;padding:15px 30px;font-size:20px;}
-        .container{padding:25px;max-width:900px;margin:auto;}
+        .container{padding:30px;max-width:900px;margin:auto;}
         .card{
             background:white;
             padding:20px;
@@ -13,26 +14,27 @@
             box-shadow:0 3px 10px rgba(0,0,0,0.15);
             display:flex;
             gap:20px;
-            flex-wrap:wrap;
+            align-items:center;
         }
         img{
             width:320px;
-            height:280px;
+            height:320px;
             object-fit:contain;
             background:#fff;
             border-radius:12px;
         }
         .btn{
             display:inline-block;
-            margin-top:10px;
-            padding:8px 15px;
-            background:#0d6efd;
+            padding:10px 18px;
+            background:black;
             color:white;
             text-decoration:none;
-            border-radius:6px;
-            font-weight:bold;
+            border-radius:8px;
+            margin-right:10px;
+            margin-top:10px;
         }
-        .btn:hover{background:#084298;}
+        .btn:hover{background:orange;color:black;}
+        .price{font-size:22px;font-weight:bold;margin-top:10px;}
     </style>
 </head>
 <body>
@@ -40,31 +42,31 @@
 <div class="header">📦 Product Details</div>
 
 <div class="container">
-    <a href="{% url 'dashboard' %}">⬅ Back to Dashboard</a>
-    <br><br>
+
+    <a class="btn" href="/dashboard/">⬅ Back</a>
 
     <div class="card">
         {% if product.image %}
-            <img src="{{ product.image.url }}">
+            <img src="{{ product.image.url }}" alt="">
         {% else %}
-            <img src="https://via.placeholder.com/300x200">
+            <img src="https://via.placeholder.com/320" alt="">
         {% endif %}
 
         <div>
             <h2>{{ product.name }}</h2>
-            <h3>₹{{ product.price }}</h3>
+            <p class="price">₹{{ product.price }}</p>
 
-            {% if product.description %}
-                <p>{{ product.description }}</p>
-            {% else %}
-                <p>No description available.</p>
-            {% endif %}
+            <a class="btn" href="{% url 'add_to_cart' product.id %}">
+                🛒 Add To Cart
+            </a>
 
-            <!-- Later you can add cart / buy now -->
-            <a class="btn" href="{% url 'dashboard' %}">Continue Shopping</a>
+            <a class="btn" style="background:green;" href="{% url 'place_order_single' product.id %}">
+                   Place Order
+            </a>
         </div>
     </div>
+
 </div>
 
 </body>
-</html>
+</html> 

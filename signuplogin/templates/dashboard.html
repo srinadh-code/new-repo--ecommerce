@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html>
 <head>
     <title>Dashboard</title>
@@ -67,12 +67,224 @@
 </div>
 
 <div class="container">
-
-
-    <div class="top-links">
-        <a href="/login/" class="top-btn">🔐 Login</a>
+    <div class="top-links"> {% endcomment %}
+        
         {% comment %} <a href="/dashboard/" class="top-btn">🏠 Home</a> {% endcomment %}
+    {% comment %} </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h2>Categories</h2>
+    <style>.box-btn{
+    display:inline-block;
+    padding:10px 22px;
+    border-radius:6px;
+    border:2px solid #333;
+    text-decoration:none;
+    font-weight:bold;
+    margin-left:10px;
+}
+
+.settings-box{
+    border-color:#6f42c1;
+    color:#6f42c1;
+}
+
+.settings-box:hover{
+    background:#6f42c1;
+    color:white;
+}
+
+.login-box{
+    background:#28a745;
+    border-color:#28a745;
+    color:white;
+}
+
+.login-box:hover{
+    background:#1e7e34;
+}
+</style>
+    <div>
+        <a href="{% url 'settings' %}" style="margin-right:15px;">
+            ⚙ Settings
+        </a> {% endcomment %}
+
+        {% comment %} <a href="/login/">
+            🔐 Login
+        </a> {% endcomment %}
+        
+    {% comment %} </div>
+
+ <div class="top-links">
+    <a href="{% url 'my_orders' %}" class="top-btn orders-btn">🧾 My Orders</a>
+    <a href="/login/" class="top-btn login-btn">🔐 Login</a>
+</div>
+<style>
+.top-links{
+    float:right;
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.top-btn{
+    padding:6px 14px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+    display:inline-block;
+}
+
+.orders-btn{
+    background:orange;
+    color:black;
+}
+
+.login-btn{
+    background:lightgreen;
+    color:black;
+}
+</style>
+ 
+
+    <h2>Categories</h2>
+
+    <div class="categories">
+        {% for cat in categories %}
+            <a href="{% url 'category_products' cat.id %}">
+                <button class="cat-btn">{{ cat.name }}</button>
+            </a>
+        {% endfor %}
     </div>
+
+</div>
+
+</body>
+</html>
+
+
+ {% endcomment %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body{
+            font-family: Arial;
+            margin:0;
+            background:#f4f4f4;
+        }
+
+        /* ✅ Header */
+        .header{
+            background:#111;
+            color:white;
+            padding:15px 30px;
+            font-size:20px;
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .header a{
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        /* ✅ Right side buttons in header */
+        .header-right{
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .btn-link{
+            padding:7px 14px;
+            border-radius:8px;
+            font-size:14px;
+            display:inline-block;
+        }
+
+        .cart-btn{
+            color:white;
+        }
+
+        .settings-btn{
+            background:#6f42c1;
+            color:white;
+        }
+
+        .orders-btn{
+            background:orange;
+            color:black;
+        }
+
+        .login-btn{
+            background:lightgreen;
+            color:black;
+            border:1px solid green;
+        }
+
+        /* ✅ Container */
+        .container{
+            padding:25px;
+        }
+
+        h2{
+            margin-top:0;
+        }
+
+        /* ✅ Category Grid */
+        .categories{
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap:15px;
+            margin-top:15px;
+        }
+
+        .cat-btn{
+            background:white;
+            padding:16px;
+            border-radius:12px;
+            border:none;
+            cursor:pointer;
+            font-weight:bold;
+            font-size:16px;
+            box-shadow:0px 3px 8px rgba(0,0,0,0.15);
+            width:100%;
+        }
+
+        .cat-btn:hover{
+            background:orange;
+            color:white;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ✅ HEADER -->
+<div class="header">
+    <span>Welcome to Ecommerce</span>
+
+    <div class="header-right">
+        <!-- Cart -->
+        <a href="/cart/view/" class="btn-link cart-btn">🛒 Cart</a>
+
+        <!-- Settings -->
+        <a href="{% url 'settings' %}" class="btn-link settings-btn">⚙ Settings</a>
+
+        <!-- My Orders -->
+        {% comment %} <a href="{% url 'my_orders' %}" class="btn-link orders-btn">🧾 My Orders</a> {% endcomment %}
+
+        <!-- Login -->
+        <a href="/login/" class="btn-link login-btn">🔐 Login</a>
+    </div>
+</div>
+
+<!--  MAIN CONTENT -->
+<div class="container">
 
     <h2>Categories</h2>
 

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Success</title>
+</head>
+<body style="font-family:Arial; text-align:center; margin-top:150px; background:#f4f4f4;">
+
+    <h1 style="color:green;"> Order Placed Successfully!</h1>
+
+    <h2>Order ID: {{ order.id }}</h2>
+    <h3>Total Amount: ₹{{ order.total_amount }}</h3>
+
+    <br>
+
+    <a href="/dashboard/"
+       style="padding:12px 24px; background:black; color:white; text-decoration:none; border-radius:8px;">
+        ⬅ Back to Dashboard
+    </a>
+
+</body>
+</html>

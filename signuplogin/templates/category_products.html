@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,13 +24,14 @@
 
         .products{
             display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
             gap:16px;
+            margin-top: 15px;
         }
 
         .card{
             background:white;
-            padding:12px;
+            padding:15px;
             border-radius:12px;
             box-shadow:0 3px 10px rgba(0,0,0,0.15);
             text-align:center;
@@ -56,34 +58,32 @@
         }
 
         .btn{
-            padding:10px 14px;
-            border:none;
+            display:inline-block;
+            padding:10px 18px;
             border-radius:8px;
-            cursor:pointer;
             font-weight:bold;
             font-size:14px;
+            text-decoration:none;
         }
 
         .cart-btn{
+            background:black;
+            color:white;
+        }
+
+        .cart-btn:hover{
             background:orange;
             color:black;
         }
 
-        .cart-btn:hover{
-            background:darkorange;
-        }
-
         .buy-btn{
-            background:green;
-            color:white;
+            background:orange;
+            color:black;
         }
 
         .buy-btn:hover{
-            background:darkgreen;
-        }
-
-        a{
-            text-decoration:none;
+            background:green;
+            color:white;
         }
     </style>
 </head>
@@ -99,54 +99,33 @@
     <h2>{{ category.name }} Items</h2>
 
     <div class="products">
+        {% for p in products %}
+            <div class="card">
 
-    {% for p in products %}
+                {% if p.image %}
+                    <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/300x200" alt="No Image">
+                {% endif %}
 
-        <div class="card">
+                <h3>{{ p.name }}</h3>
+                <p class="price">₹{{ p.price }}</p>
 
-            {% if p.image %}
-                <img src="{{ p.image.url }}" alt="{{ p.name }}">
-            {% else %}
-                <img src="https://via.placeholder.com/300x200" alt="No Image">
-            {% endif %}
+                <div class="btns">
+                    <a class="btn cart-btn" href="{% url 'add_to_cart' p.id %}">
+                        Add To Cart
+                    </a>
 
-            <h3>{{ p.name }}</h3>
-            <p class="price">₹{{ p.price }}</p>
+                    <a class="btn buy-btn" href="{% url 'product_detail' p.id %}">
+                         Buy Now
+                    </a>
 
-            <div class="btns">
-                <a class="btn" href="{% url 'add_to_cart' p.id %}">
-    Add To Cart
-</a>
-
-<a class="btn" href="{% url 'view_cart' %}">
-    View Cart
-</a>
-<style>
-.btn{
-    display:inline-block;
-    margin-top:10px;
-    padding:8px 16px;
-    background:#000;
-    color:white;
-    text-decoration:none;
-    border-radius:6px;
-    margin-right:8px;
-}
-.btn:hover{
-    background:orange;
-    color:black;
-}
-</style>
-
+                </div>
 
             </div>
-
-        </div>
-
-    {% empty %}
-        <h3>No products available.</h3>
-    {% endfor %}
-
+        {% empty %}
+            <h3>No products available.</h3>
+        {% endfor %}
     </div>
 
 </div>

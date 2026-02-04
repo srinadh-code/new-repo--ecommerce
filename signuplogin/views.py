@@ -3,11 +3,14 @@ from datetime import timedelta
 from django.shortcuts import redirect,render
 from django.core.mail import send_mail
 from django.utils import timezone
-from django.contrib.auth.hashers import check_password, make_password,identify_hasher
+from django.contrib.auth.hashers import check_password, make_password#identify_hasher
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Signup, PasswordResetOTP
+
+from django.shortcuts import render
+from .models import Category,Product
 from .serializers import (
     SignupSerializer,
     LoginSerializer,
@@ -17,9 +20,7 @@ from .serializers import (
 )
 from rest_framework.permissions import  AllowAny
 
-
-
-# ✅ Signup
+#  Signup
 class SignupView(APIView):
     permission_classes = [AllowAny]
 
@@ -41,10 +42,11 @@ class LoginView(APIView):
 
             user = Signup.objects.filter(username=username).first()
             if user and check_password(password, user.password):
+                # return Response({"msg": "login sucessful","username":username,"password":password})
                 return redirect("splash")
                
 
-            return Response({"msg": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
+            # return Response({"msg": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -151,13 +153,6 @@ def splash_page(request):
     return render(request, "splash.html")
 
 
-from django.shortcuts import render
-from .models import Category,Product
-
-
-
-
-
 def category_products(request, cat_id):
     category = Category.objects.get(id=cat_id)
     products = Product.objects.filter(category=category)
@@ -173,3 +168,35 @@ from .models import Product
 def product_detail(request, id):
     product = get_object_or_404(Product, id=id)
     return render(request, "product_detail.html", {"product": product})
+from django.shortcuts import render, get_object_or_404
+from .models import Product
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, "product_detail.html", {"product": product})
+
+
+
+
+
+
+
+from django.shortcuts import render
+
+def settings_page(request):
+    return render(request, "settings.html")
+from django.shortcuts import redirect, render
+from django.contrib.auth import logout
+
+def set_language(request):
+    if request.method == "POST":
+        lang = request.POST.get("language")
+        request.session["language"] = lang
+    return redirect("settings")
+
+def my_orders(request):
+    return render(request, "my_orders.html")
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
