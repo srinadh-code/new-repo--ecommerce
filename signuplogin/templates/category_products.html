@@ -43,20 +43,48 @@
             border-radius:10px;
         }
 
-        .btn{
-            display:inline-block;
+        .price{
+            font-weight:bold;
+            margin:8px 0;
+        }
+
+        .btns{
+            display:flex;
+            gap:10px;
+            justify-content:center;
             margin-top:10px;
-            padding:8px 15px;
-            background:#000;
+        }
+
+        .btn{
+            padding:10px 14px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:bold;
+            font-size:14px;
+        }
+
+        .cart-btn{
+            background:orange;
+            color:black;
+        }
+
+        .cart-btn:hover{
+            background:darkorange;
+        }
+
+        .buy-btn{
+            background:green;
             color:white;
+        }
+
+        .buy-btn:hover{
+            background:darkgreen;
+        }
+
+        a{
             text-decoration:none;
-            border-radius:6px;
         }
-
-        .btn:hover{
-            background:#333;
-        }
-
     </style>
 </head>
 
@@ -66,37 +94,60 @@
 
 <div class="container">
 
-<a href="{% url 'dashboard' %}">⬅ Back to Dashboard</a>
+    <a href="{% url 'dashboard' %}">⬅ Back to Dashboard</a>
 
-<h2>{{ category.name }} Items</h2>
+    <h2>{{ category.name }} Items</h2>
 
-<div class="products">
+    <div class="products">
 
-{% for p in products %}
+    {% for p in products %}
 
-<div class="card">
+        <div class="card">
 
-    {% if p.image %}
-        <img src="{{ p.image.url }}">
-    {% else %}
-        <img src="https://via.placeholder.com/300x200">
-    {% endif %}
+            {% if p.image %}
+                <img src="{{ p.image.url }}" alt="{{ p.name }}">
+            {% else %}
+                <img src="https://via.placeholder.com/300x200" alt="No Image">
+            {% endif %}
 
-    <h3>{{ p.name }}</h3>
-    <p>₹{{ p.price }}</p>
+            <h3>{{ p.name }}</h3>
+            <p class="price">₹{{ p.price }}</p>
 
-    <a class="btn" href="{% url 'add_to_cart' p.id %}">
-        Add To Cart
-    </a>
+            <div class="btns">
+                <a class="btn" href="{% url 'add_to_cart' p.id %}">
+    Add To Cart
+</a>
 
-</div>
+<a class="btn" href="{% url 'view_cart' %}">
+    View Cart
+</a>
+<style>
+.btn{
+    display:inline-block;
+    margin-top:10px;
+    padding:8px 16px;
+    background:#000;
+    color:white;
+    text-decoration:none;
+    border-radius:6px;
+    margin-right:8px;
+}
+.btn:hover{
+    background:orange;
+    color:black;
+}
+</style>
 
-{% empty %}
-<h3>No products available.</h3>
 
-{% endfor %}
+            </div>
 
-</div>
+        </div>
+
+    {% empty %}
+        <h3>No products available.</h3>
+    {% endfor %}
+
+    </div>
 
 </div>
 

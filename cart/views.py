@@ -1,89 +1,54 @@
-from django.shortcuts import redirect, render
-from signuplogin.models import Product
-
-def add_to_cart(request, product_id):
-    cart = request.session.get("cart", {})
-    pid = str(product_id)
-
-    cart[pid] = cart.get(pid, 0) + 1
-    request.session["cart"] = cart
-
-    return redirect("view_cart")
-
-
-def view_cart(request):
-    cart = request.session.get("cart", {})
-
-    items = []
-    total = 0
-
-    for pid, qty in cart.items():
-        product = Product.objects.get(id=pid)
-        subtotal = product.price * qty
-        total += subtotal
-
-        items.append({
-            "product": product,
-            "qty": qty,
-            "subtotal": subtotal
-        })
-
-    return render(request, "cart.html", {"items": items, "total": total})
-
-
-def remove_cart(request, product_id):
-    cart = request.session.get("cart", {})
-    pid = str(product_id)
-
-    if pid in cart:
-        del cart[pid]
-
-    request.session["cart"] = cart
-    return redirect("view_cart")
-
-import uuid
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from Userinfo.models import Order, OrderItem
-
 from signuplogin.models import Product
+from .models import CartItem
 
 
 @login_required
-def checkout(request):
-    cart = request.session.get("cart", {})
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
 
-    if not cart:
-        return redirect("view_cart")
-
-    total = 0
-
-    #  create new order
-    order = Order.objects.create(
+    cart_item, created = CartItem.objects.get_or_create(
         user=request.user,
-        order_id=str(uuid.uuid4())[:10],
-        status="PLACED",
-        total_amount=0,
-        discount_amount=0
+        product=product
     )
 
-    #  add items into order
-    for pid, qty in cart.items():
-        product = Product.objects.get(id=pid)
-        subtotal = product.price * qty
-        total += subtotal
+    if not created:
+        cart_item.quantity += 1
+    cart_item.save()
 
-        OrderItem.objects.create(
-            order=order,
-            product=product,
-            quantity=qty,
-            unit_price=product.price
-        )
+    return redirect("view_cart")
 
-    #  update order total
-    order.total_amount = total
-    order.save()
 
-    #  clear cart
-    request.session["cart"] = {}
+@login_required
+def view_cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
 
-    return redirect("/userinfo/orders/")
+    total = 0
+    for item in cart_items:
+        total += item.subtotal()
+
+    return render(request, "cart.html", {
+        "cart_items": cart_items,
+        "total": total
+    })
+
+
+@login_required
+def remove_cart(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    cart_item.delete()
+    return redirect("view_cart")
+
+
+@login_required
+def decrease_qty(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+    else:
+        cart_item.delete()
+
+    return redirect("view_cart")

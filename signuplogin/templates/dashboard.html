@@ -1,53 +1,3 @@
-{% comment %} <!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-    <style>
-        body{font-family: Arial; margin:0; background:#f4f4f4;}
-        .header{background:#111; color:white; padding:15px 30px; font-size:20px;}
-        .container{padding:25px;}
-
-        .categories{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-        }
-
-        .cat-btn{
-            background: white;
-            padding: 16px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
-        }
-
-        .cat-btn:hover{
-            background: orange;
-        }
-    </style>
-</head>
-<body>
-
-<div class="header"> wlecome to ecommerce</div>
-
-<div class="container">
-
-    <h2>Categories</h2>
-    <div class="categories">
-        {% for cat in categories %}
-            <a href="{% url 'category_products' cat.id %}">
-                <button class="cat-btn">{{ cat.name }}</button>
-            </a>
-        {% endfor %}
-    </div>
-
-</div>
-
-</body>
-</html> {% endcomment %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -64,6 +14,24 @@
 
         .container{padding:25px;}
 
+        .top-links{
+            margin-bottom:20px;
+            overflow:hidden;
+        }
+
+        .top-btn{
+            float:right;
+            background:#e6ffe6;
+            color:green;
+            padding:4px 10px;
+            border:1px solid green;
+            border-radius:6px;
+            font-size:13px;
+            text-decoration:none;
+            font-weight:bold;
+            margin-left:10px;
+        }
+
         .categories{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -79,28 +47,35 @@
             font-weight: bold;
             font-size: 16px;
             box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+            width:100%;
         }
 
         .cat-btn:hover{
             background: orange;
+            color:white;
         }
     </style>
 </head>
-<body>
-
-<div class="header">
-     Welcome to Ecommerce
-
-    
-</div>
-
-<div class="container">
-    <a href="/cart/view_cart/" style="float:right; color:white; text-decoration:none;">
+<a href="/cart/view/" style="float:right; color:white; text-decoration:none; margin-left:20px;">
     🛒 Cart
 </a>
 
+<body>
+
+<div class="header">
+    Welcome to Ecommerce
+</div>
+
+<div class="container">
+
+
+    <div class="top-links">
+        <a href="/login/" class="top-btn">🔐 Login</a>
+        {% comment %} <a href="/dashboard/" class="top-btn">🏠 Home</a> {% endcomment %}
+    </div>
 
     <h2>Categories</h2>
+
     <div class="categories">
         {% for cat in categories %}
             <a href="{% url 'category_products' cat.id %}">
@@ -108,8 +83,6 @@
             </a>
         {% endfor %}
     </div>
-    <!-- <a href="{% url 'view_cart' %}">🛒 Cart</a> -->
-
 
 </div>
 

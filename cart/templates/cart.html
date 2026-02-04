@@ -1,0 +1,151 @@
+{% comment %} <!DOCTYPE html>
+<html>
+<head>
+    <title>My Cart</title>
+    <style>
+        body{font-family: Arial; background:#f4f4f4; margin:0;}
+        .header{background:#111; color:white; padding:15px 30px; font-size:20px;}
+        .container{padding:25px;}
+        .card{
+            background:white;
+            padding:15px;
+            margin-bottom:12px;
+            border-radius:12px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.15);
+        }
+        .btn{
+            padding:6px 12px;
+            background:black;
+            color:white;
+            text-decoration:none;
+            border-radius:6px;
+            margin-right:6px;
+            display:inline-block;
+        }
+        .btn:hover{background:orange; color:black;}
+        .total{font-size:20px; font-weight:bold; margin-top:20px;}
+    </style>
+</head>
+<body>
+
+<div class="header">🛒 My Cart</div>
+
+<div class="container">
+
+    {% for item in cart_items %}
+        <div class="card">
+            <h3>{{ item.product.name }}</h3>
+            <p>Price: ₹{{ item.product.price }}</p>
+            <p>Qty: {{ item.quantity }}</p>
+            <p><b>Subtotal:</b> ₹{{ item.subtotal }}</p>
+
+            <a class="btn" href="{% url 'decrease_qty' item.id %}">-</a>
+            <a class="btn" href="{% url 'add_to_cart' item.product.id %}">+</a>
+            <a class="btn" href="{% url 'remove_cart' item.id %}">Remove</a>
+        </div>
+    {% empty %}
+        <h3>Cart is empty</h3>
+    {% endfor %}
+
+    <div class="total">
+        Total = ₹{{ total }}
+    </div>
+
+    <br>
+    <a class="btn" href="/dashboard/">⬅ Continue Shopping</a>
+
+</div>
+
+</body>
+</html> 
+
+ {% endcomment %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Cart</title>
+    <style>
+        body{font-family: Arial; background:#f4f4f4; margin:0;}
+        .header{background:#111; color:white; padding:15px 30px; font-size:20px;}
+        .container{padding:25px;}
+
+        .card{
+            background:white;
+            padding:15px;
+            margin-bottom:12px;
+            border-radius:12px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.15);
+            display:flex;
+            gap:15px;
+            align-items:center;
+        }
+
+        .card img{
+            width:120px;
+            height:120px;
+            object-fit:cover;
+            border-radius:10px;
+            background:#fff;
+        }
+
+        .details{
+            flex:1;
+        }
+
+        .btn{
+            padding:6px 12px;
+            background:black;
+            color:white;
+            text-decoration:none;
+            border-radius:6px;
+            margin-right:6px;
+            display:inline-block;
+        }
+        .btn:hover{background:orange; color:black;}
+
+        .total{font-size:20px; font-weight:bold; margin-top:20px;}
+    </style>
+</head>
+<body>
+
+<div class="header">🛒 My Cart</div>
+
+<div class="container">
+
+    {% for item in cart_items %}
+        <div class="card">
+
+            <!--  Product Image -->
+            {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="product image">
+            {% else %}
+                <img src="https://via.placeholder.com/120" alt="no image">
+            {% endif %}
+
+            <div class="details">
+                <h3>{{ item.product.name }}</h3>
+                <p>Price: ₹{{ item.product.price }}</p>
+                <p>Qty: {{ item.quantity }}</p>
+                <p><b>Subtotal:</b> ₹{{ item.subtotal }}</p>
+
+                <a class="btn" href="{% url 'decrease_qty' item.id %}">-</a>
+                <a class="btn" href="{% url 'add_to_cart' item.product.id %}">+</a>
+                <a class="btn" href="{% url 'remove_cart' item.id %}">Remove</a>
+            </div>
+
+        </div>
+    {% empty %}
+        <h3>Cart is empty</h3>
+    {% endfor %}
+
+    <div class="total">
+        Total = ₹{{ total }}
+    </div>
+
+    <br>
+    <a class="btn" href="/dashboard/">⬅ Continue Shopping</a>
+
+</div>
+
+</body>
+</html>

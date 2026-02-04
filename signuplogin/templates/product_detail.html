@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ product.name }}</title>
+    <style>
+        body{font-family:Arial;margin:0;background:#f4f4f4;}
+        .header{background:#111;color:white;padding:15px 30px;font-size:20px;}
+        .container{padding:25px;max-width:900px;margin:auto;}
+        .card{
+            background:white;
+            padding:20px;
+            border-radius:12px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.15);
+            display:flex;
+            gap:20px;
+            flex-wrap:wrap;
+        }
+        img{
+            width:320px;
+            height:280px;
+            object-fit:contain;
+            background:#fff;
+            border-radius:12px;
+        }
+        .btn{
+            display:inline-block;
+            margin-top:10px;
+            padding:8px 15px;
+            background:#0d6efd;
+            color:white;
+            text-decoration:none;
+            border-radius:6px;
+            font-weight:bold;
+        }
+        .btn:hover{background:#084298;}
+    </style>
+</head>
+<body>
+
+<div class="header">📦 Product Details</div>
+
+<div class="container">
+    <a href="{% url 'dashboard' %}">⬅ Back to Dashboard</a>
+    <br><br>
+
+    <div class="card">
+        {% if product.image %}
+            <img src="{{ product.image.url }}">
+        {% else %}
+            <img src="https://via.placeholder.com/300x200">
+        {% endif %}
+
+        <div>
+            <h2>{{ product.name }}</h2>
+            <h3>₹{{ product.price }}</h3>
+
+            {% if product.description %}
+                <p>{{ product.description }}</p>
+            {% else %}
+                <p>No description available.</p>
+            {% endif %}
+
+            <!-- Later you can add cart / buy now -->
+            <a class="btn" href="{% url 'dashboard' %}">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
