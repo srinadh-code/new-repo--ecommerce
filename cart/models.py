@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from signuplogin.models import Product   #  using Product from signuplogin app
+from signuplogin.models import Product   
 
 
 class CartItem(models.Model):
@@ -14,9 +14,7 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"
-from django.db import models
-from django.contrib.auth.models import User
-from signuplogin.models import Product
+
 
 
 class CartItem(models.Model):

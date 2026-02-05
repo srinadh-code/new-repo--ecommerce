@@ -2,11 +2,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
 from signuplogin.models import Product
 from .models import CartItem, Order, OrderItem
-
-
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -21,8 +18,6 @@ def add_to_cart(request, product_id):
     cart_item.save()
 
     return redirect("view_cart")
-
-
 @login_required
 def view_cart(request):
     cart_items = CartItem.objects.filter(user=request.user)
@@ -35,15 +30,11 @@ def view_cart(request):
         "cart_items": cart_items,
         "total": total
     })
-
-
 @login_required
 def remove_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
     cart_item.delete()
     return redirect("view_cart")
-
-
 @login_required
 def decrease_qty(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
@@ -55,9 +46,7 @@ def decrease_qty(request, item_id):
         cart_item.delete()
 
     return redirect("view_cart")
-
-
-#  PLACE ORDER 
+#  for Placing order 
 @login_required
 def place_order(request):
     cart_items = CartItem.objects.filter(user=request.user)
@@ -66,7 +55,7 @@ def place_order(request):
         messages.error(request, "Your cart is empty!")
         return redirect("view_cart")
 
-    #  Create order
+    # for Create order
     order = Order.objects.create(user=request.user)
 
     total = 0
@@ -96,15 +85,11 @@ def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by("-created_at")
     return render(request, "my_orders.html", {"orders": orders})
 
-
-
-
-#  Product Detail Page (Buy Now opens this)
+#  Product Detail Page 
 @login_required
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, "product_detail.html", {"product": product})
-
 
 #  Place Order from product detail page
 @login_required
@@ -121,12 +106,9 @@ def place_order_single(request, product_id):
         quantity=1,
         unit_price=product.price
     )
-
     order.total_amount = product.price
     order.save()
-
     return redirect("order_success", order_id=order.id)
-
 
 #  Order Success Page
 @login_required

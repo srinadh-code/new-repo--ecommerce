@@ -3,11 +3,12 @@ from datetime import timedelta
 from django.shortcuts import redirect,render
 from django.core.mail import send_mail
 from django.utils import timezone
-from django.contrib.auth.hashers import check_password, make_password#identify_hasher
+from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Signup, PasswordResetOTP
+from django.shortcuts import render
 
 from django.shortcuts import render
 from .models import Category,Product
@@ -22,13 +23,39 @@ from rest_framework.permissions import  AllowAny
 
 #  Signup
 class SignupView(APIView):
-    permission_classes = [AllowAny]
+#     permission_classes = [AllowAny]
 
-    def post(self, request):
+#     def post(self, request):
+#         serializer = SignupSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return redirect("dashboard") 
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ def post(self, request):
+        #  Check incoming request data
+        print("DEBUG: Signup request received")
+        print("DEBUG: Request data:", request.data)
+
         serializer = SignupSerializer(data=request.data)
+
+        # Check serializer validation
         if serializer.is_valid():
-            serializer.save()
-            return redirect("dashboard") 
+            print("DEBUG: Serializer is valid")
+            print("DEBUG: Validated data:", serializer.validated_data)
+
+            user = serializer.save()
+            print("DEBUG: User saved successfully")
+            print("DEBUG: User ID:", user.id)
+            print("DEBUG: Username:", user.username)
+            # return Response({"username":user.username,"email":user.email})
+            
+
+            return redirect("dashboard")
+
+        #  If validation fails
+        print("DEBUG: Serializer validation failed")
+        print("DEBUG: Errors:", serializer.errors)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #  Login
@@ -129,7 +156,7 @@ class ResetPasswordView(APIView):
             if not otp_obj:
                 return Response({"msg": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
-            #  expiry check
+            # expiry check
             if timezone.now() - otp_obj.created_at > timedelta(minutes=10):
                 return Response({"msg": "OTP expired"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,7 +164,7 @@ class ResetPasswordView(APIView):
             if otp_obj.is_verified is False:
                 return Response({"msg": "OTP not verified. Please verify OTP first."}, status=status.HTTP_400_BAD_REQUEST)
 
-            #  reset password
+            #                    reset password
             user.password = make_password(new_password)
             user.save()
 
@@ -174,14 +201,6 @@ from .models import Product
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, "product_detail.html", {"product": product})
-
-
-
-
-
-
-
-from django.shortcuts import render
 
 def settings_page(request):
     return render(request, "settings.html")

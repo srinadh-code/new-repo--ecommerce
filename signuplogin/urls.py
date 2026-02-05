@@ -29,10 +29,6 @@ urlpatterns = [
     path("logout/", logout_view, name="logout"),
     
     path("category/<int:cat_id>/", category_products, name="category_products"),
-    # path("product/<int:id>/", product_detail, name="product_detail"),
-    path("product/<int:product_id>/", product_detail, name="product_detail"),
-
-
-    
+    path("product/<int:product_id>/", product_detail, name="product_detail"),   
 
 ]
