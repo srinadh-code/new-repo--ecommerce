@@ -9,9 +9,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import PasswordResetOTP
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render
-
 from .models import Category,Product
+from rest_framework.permissions import  AllowAny
 from .serializers import (
     SignupSerializer,
     LoginSerializer,
@@ -19,34 +18,6 @@ from .serializers import (
     VerifyOtpSerializer,
     ResetPasswordSerializer
 )
-from rest_framework.permissions import  AllowAny
-
-# #  Signup
-# class SignupView(APIView):
-#  def post(self, request):
-#         #  Check incoming request data
-#         print("DEBUG: Signup request received")
-#         print("DEBUG: Request data:", request.data)
-
-#         serializer = SignupSerializer(data=request.data)
-
-#         # Check serializer validation
-#         if serializer.is_valid():
-#             print("DEBUG: Serializer is valid")
-#             print("DEBUG: Validated data:", serializer.validated_data)
-
-#             user = serializer.save()
-#             print("DEBUG: User saved successfully")
-#             print("DEBUG: User ID:", user.id)
-#             print("DEBUG: Username:", user.username)
-#             return redirect("dashboard")
-
-#         #  If validation fails
-#         print("DEBUG: Serializer validation failed")
-#         print("DEBUG: Errors:", serializer.errors)
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class SignupView(APIView):
     def post(self, request):
@@ -81,28 +52,6 @@ class LoginView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-# #  Login
-# class LoginView(APIView):
-#     permission_classes=[AllowAny]
-#     def post(self, request):
-#         serializer = LoginSerializer(data=request.data)
-#         if serializer.is_valid():
-#             username = serializer.validated_data["username"]
-#             password = serializer.validated_data["password"]
-
-#             user = Signup.objects.filter(username=username).first()
-#             if user and check_password(password, user.password):
-#                 # return Response({"msg": "login sucessful","username":username,"password":password})
-#                 return redirect("splash")
-               
-
-#             # return Response({"msg": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-#  Forgot Password (Send OTP)
 class ForgotPasswordView(APIView):
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
@@ -110,7 +59,7 @@ class ForgotPasswordView(APIView):
             
             email = serializer.validated_data["email"]
 
-            user = Signup.objects.filter(email=email).first()
+            user = user.objects.filter(email=email).first()
             if not user:
                 return Response({"msg": "Email not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -142,7 +91,7 @@ class VerifyOtpView(APIView):
             email = serializer.validated_data["email"]
             otp = serializer.validated_data["otp"]
 
-            user = Signup.objects.filter(email=email).first()
+            user = user.objects.filter(email=email).first()
             if not user:
                 return Response({"msg": "Email not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -172,7 +121,7 @@ class ResetPasswordView(APIView):
             otp = serializer.validated_data["otp"]
             new_password = serializer.validated_data["new_password"]
 
-            user = Signup.objects.filter(email=email).first()
+            user = user.objects.filter(email=email).first()
             if not user:
                 return Response({"msg": "Email not found"}, status=status.HTTP_404_NOT_FOUND)
 
