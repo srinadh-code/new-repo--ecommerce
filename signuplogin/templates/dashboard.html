@@ -264,13 +264,18 @@
 
 <body>
 
-<!-- ✅ HEADER -->
+<!--  HEADER -->
 <div class="header">
     <span>Welcome to Ecommerce</span>
 
     <div class="header-right">
         <!-- Cart -->
         <a href="/cart/view/" class="btn-link cart-btn">🛒 Cart</a>
+      <a href="{% url 'profile_page' %}" style="float:right; color:white; text-decoration:none; margin-left:20px;">
+    👤 Profile
+</a>
+
+
 
         <!-- Settings -->
         <a href="{% url 'settings' %}" class="btn-link settings-btn">⚙ Settings</a>

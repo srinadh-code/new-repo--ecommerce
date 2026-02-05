@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+    <style>
+        body{font-family:Arial;background:#f4f4f4;margin:0}
+        .header{background:#111;color:white;padding:15px 30px;font-size:20px}
+        .box{
+            width:420px;
+            background:white;
+            margin:50px auto;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.15);
+        }
+        label{font-weight:bold;font-size:14px}
+        input, textarea{
+            width:100%;
+            padding:8px;
+            margin:6px 0 14px;
+            border-radius:6px;
+            border:1px solid #ccc;
+        }
+        textarea{resize:none;height:60px}
+        .btn{
+            padding:7px 14px;
+            border-radius:6px;
+            text-decoration:none;
+            font-weight:bold;
+            border:none;
+            cursor:pointer;
+        }
+        .update{background:green;color:white}
+        .back{background:orange;color:black}
+        .delete{background:red;color:white;float:right}
+    </style>
+</head>
+
+<body>
+
+<div class="header">👤 My Profile</div>
+
+<div class="box">
+
+    {% if profile %}
+        <h3>Profile</h3>
+    {% else %}
+        <h3>Create Profile</h3>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Full Name</label>
+        <input type="text" name="full_name" value="{{ profile.full_name|default:'' }}" required>
+
+        <label>Phone Number</label>
+        <input type="text" name="phone_number" value="{{ profile.phone_number|default:'' }}" required>
+
+        <label>Address</label>
+        <textarea name="address">{{ profile.address|default:'' }}</textarea>
+
+        <label>City</label>
+        <input type="text" name="city" value="{{ profile.city|default:'' }}">
+
+        <label>State</label>
+        <input type="text" name="state" value="{{ profile.state|default:'' }}">
+
+        <label>Pincode</label>
+        <input type="text" name="pincode" value="{{ profile.pincode|default:'' }}">
+
+        {% if profile %}
+            <button class="btn update" type="submit">Update</button>
+        {% else %}
+            <button class="btn update" type="submit">Create Profile</button>
+        {% endif %}
+
+        <a href="/dashboard/" class="btn back">← Back</a>
+
+        {% if profile %}
+            <a href="{% url 'delete_profile' %}" 
+               class="btn delete"
+               onclick="return confirm('Are you sure you want to delete your profile?');">
+                Delete
+            </a>
+        {% endif %}
+    </form>
+
+</div>
+
+</body>
+</html>

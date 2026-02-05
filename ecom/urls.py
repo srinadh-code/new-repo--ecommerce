@@ -28,6 +28,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("signuplogin.urls")),
     path("cart/", include("cart.urls")), 
+    path("userinfo/", include("Userinfo.urls")),
     
 ]
 
