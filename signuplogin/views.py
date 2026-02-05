@@ -3,14 +3,14 @@ from datetime import timedelta
 from django.shortcuts import redirect,render
 from django.core.mail import send_mail
 from django.utils import timezone
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import  make_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Signup, PasswordResetOTP
+from .models import PasswordResetOTP
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render
 
-from django.shortcuts import render
 from .models import Category,Product
 from .serializers import (
     SignupSerializer,
@@ -21,61 +21,85 @@ from .serializers import (
 )
 from rest_framework.permissions import  AllowAny
 
-#  Signup
-class SignupView(APIView):
-#     permission_classes = [AllowAny]
+# #  Signup
+# class SignupView(APIView):
+#  def post(self, request):
+#         #  Check incoming request data
+#         print("DEBUG: Signup request received")
+#         print("DEBUG: Request data:", request.data)
 
-#     def post(self, request):
 #         serializer = SignupSerializer(data=request.data)
+
+#         # Check serializer validation
 #         if serializer.is_valid():
-#             serializer.save()
-#             return redirect("dashboard") 
+#             print("DEBUG: Serializer is valid")
+#             print("DEBUG: Validated data:", serializer.validated_data)
+
+#             user = serializer.save()
+#             print("DEBUG: User saved successfully")
+#             print("DEBUG: User ID:", user.id)
+#             print("DEBUG: Username:", user.username)
+#             return redirect("dashboard")
+
+#         #  If validation fails
+#         print("DEBUG: Serializer validation failed")
+#         print("DEBUG: Errors:", serializer.errors)
+
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
- def post(self, request):
-        #  Check incoming request data
-        print("DEBUG: Signup request received")
-        print("DEBUG: Request data:", request.data)
 
+
+class SignupView(APIView):
+    def post(self, request):
         serializer = SignupSerializer(data=request.data)
-
-        # Check serializer validation
         if serializer.is_valid():
-            print("DEBUG: Serializer is valid")
-            print("DEBUG: Validated data:", serializer.validated_data)
-
             user = serializer.save()
-            print("DEBUG: User saved successfully")
-            print("DEBUG: User ID:", user.id)
-            print("DEBUG: Username:", user.username)
-            # return Response({"username":user.username,"email":user.email})
-            
-
+            login(request, user) 
             return redirect("dashboard")
+        return Response(serializer.errors, status=400)
 
-        #  If validation fails
-        print("DEBUG: Serializer validation failed")
-        print("DEBUG: Errors:", serializer.errors)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#  Login
 class LoginView(APIView):
-    permission_classes=[AllowAny]
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
+
         if serializer.is_valid():
-            username = serializer.validated_data["username"]
-            password = serializer.validated_data["password"]
+            user = authenticate(
+                username=serializer.validated_data["username"],
+                password=serializer.validated_data["password"]
+            )
 
-            user = Signup.objects.filter(username=username).first()
-            if user and check_password(password, user.password):
-                # return Response({"msg": "login sucessful","username":username,"password":password})
+            if user:
+                login(request, user)
                 return redirect("splash")
-               
 
-            # return Response({"msg": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"msg": "Invalid username or password"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# #  Login
+# class LoginView(APIView):
+#     permission_classes=[AllowAny]
+#     def post(self, request):
+#         serializer = LoginSerializer(data=request.data)
+#         if serializer.is_valid():
+#             username = serializer.validated_data["username"]
+#             password = serializer.validated_data["password"]
+
+#             user = Signup.objects.filter(username=username).first()
+#             if user and check_password(password, user.password):
+#                 # return Response({"msg": "login sucessful","username":username,"password":password})
+#                 return redirect("splash")
+               
+
+#             # return Response({"msg": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
+
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 #  Forgot Password (Send OTP)
