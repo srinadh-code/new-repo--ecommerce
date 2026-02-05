@@ -20,6 +20,8 @@ from .serializers import (
 )
 
 class SignupView(APIView):
+    def get (self, request):
+        return render(request, "signup.html")
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
@@ -31,7 +33,8 @@ class SignupView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
-
+    def get(self, request):
+        return render(request, "login.html")
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
 
