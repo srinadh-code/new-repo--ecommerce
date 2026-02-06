@@ -1,24 +1,4 @@
-from django.db import models
-from django.utils import timezone
 
-
-# class Signup(models.Model):
-#     username = models.CharField(max_length=100)
-#     email = models.EmailField(unique=True)
-#     password = models.CharField(max_length=255)
-
-#     def __str__(self):
-#         return self.username
-
-
-# class PasswordResetOTP(models.Model):
-#     user = models.ForeignKey(Signup, on_delete=models.CASCADE, related_name="otps")
-#     otp = models.CharField(max_length=6)
-#     created_at = models.DateTimeField(default=timezone.now)
-#     is_verified = models.BooleanField(default=False)
-
-#     def __str__(self):
-#         return f"{self.user.email} - {self.otp}"
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -57,3 +37,24 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+from django.db import models
+from django.contrib.auth.models import User
+
+class Address(models.Model):
+    ADDRESS_TYPE_CHOICES = (
+        ("Home", "Home"),
+        ("Office", "Office"),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="addresses")
+    full_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=10)
+    address_line = models.TextField()
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    pincode = models.CharField(max_length=6)
+    address_type = models.CharField(max_length=10, choices=ADDRESS_TYPE_CHOICES)
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.city}"

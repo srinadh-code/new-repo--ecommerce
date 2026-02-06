@@ -11,6 +11,9 @@ from .models import PasswordResetOTP
 from django.contrib.auth import authenticate, login
 from .models import Category,Product
 from rest_framework.permissions import  AllowAny
+from .models import Category
+from django.shortcuts import render, get_object_or_404
+from .models import Product
 from .serializers import (
     SignupSerializer,
     LoginSerializer,
@@ -20,6 +23,7 @@ from .serializers import (
 )
 
 class SignupView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
@@ -165,11 +169,10 @@ def dashboard_page(request):
 from django.shortcuts import render, get_object_or_404
 from .models import Product
 
-def product_detail(request, id):
-    product = get_object_or_404(Product, id=id)
-    return render(request, "product_detail.html", {"product": product})
-from django.shortcuts import render, get_object_or_404
-from .models import Product
+# def product_detail(request, id):
+#     product = get_object_or_404(Product, id=id)
+#     return render(request, "product_detail.html", {"product": product})
+
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -192,3 +195,57 @@ def my_orders(request):
 def logout_view(request):
     logout(request)
     return redirect("login")
+
+
+
+from django.contrib.auth.decorators import login_required
+from .models import Address
+
+@login_required
+def my_addresses(request):
+    addresses = Address.objects.filter(user=request.user)
+    return render(request, "addresses.html", {"addresses": addresses})
+
+@login_required
+def add_address(request):
+    if request.method == "POST":
+        Address.objects.create(
+            user=request.user,
+            full_name=request.POST["full_name"],
+            phone_number=request.POST["phone_number"],
+            address_line=request.POST["address_line"],
+            city=request.POST["city"],
+            state=request.POST["state"],
+            pincode=request.POST["pincode"],
+            address_type=request.POST["address_type"],
+        )
+        return redirect("my_addresses")
+
+    return render(request, "add_address.html")
+
+@login_required
+def delete_address(request, id):
+    address = Address.objects.get(id=id, user=request.user)
+    address.delete()
+    return redirect("my_addresses")
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Address
+
+@login_required
+def edit_address(request, id):
+    address = get_object_or_404(Address, id=id, user=request.user)
+
+    if request.method == "POST":
+        address.full_name = request.POST["full_name"]
+        address.phone_number = request.POST["phone_number"]
+        address.address_line = request.POST["address_line"]
+        address.city = request.POST["city"]
+        address.state = request.POST["state"]
+        address.pincode = request.POST["pincode"]
+        address.address_type = request.POST["address_type"]
+        address.save()
+
+        return redirect("my_addresses")
+
+    return render(request, "edit_address.html", {"address": address})

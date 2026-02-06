@@ -1,0 +1,194 @@
+{% comment %} <!DOCTYPE html>
+<html>
+<head>
+    <title>Add Address</title>
+</head>
+<body>
+
+<h2>Add New Address</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <input name="full_name" placeholder="Full Name"><br><br>
+    <input name="phone_number" placeholder="Phone Number"><br><br>
+    <textarea name="address_line" placeholder="Address"></textarea><br><br>
+    <input name="city" placeholder="City"><br><br>
+    <input name="state" placeholder="State"><br><br>
+    <input name="pincode" placeholder="Pincode"><br><br>
+
+    <select name="address_type">
+        <option>Home</option>
+        <option>Office</option>
+    </select><br><br>
+
+    <button type="submit">Save Address</button>
+</form>
+
+</body>
+</html> {% endcomment %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Address</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f1f3f6;
+            margin:0;
+            padding:0;
+        }
+
+        .page{
+            max-width:520px;
+            margin:40px auto;
+            background:white;
+            padding:25px 30px;
+            border-radius:10px;
+            box-shadow:0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        h2{
+            margin-top:0;
+            margin-bottom:20px;
+            color:#333;
+        }
+
+        .form-group{
+            margin-bottom:15px;
+        }
+
+        label{
+            font-size:13px;
+            font-weight:bold;
+            color:#555;
+            display:block;
+            margin-bottom:6px;
+        }
+
+        input, textarea, select{
+            width:100%;
+            padding:10px 12px;
+            border-radius:6px;
+            border:1px solid #ccc;
+            font-size:14px;
+            outline:none;
+        }
+
+        textarea{
+            resize:none;
+            height:80px;
+        }
+
+        input:focus, textarea:focus, select:focus{
+            border-color:#2874f0;
+        }
+
+        .row{
+            display:flex;
+            gap:12px;
+        }
+
+        .row .form-group{
+            flex:1;
+        }
+
+        .address-type{
+            display:flex;
+            gap:15px;
+        }
+
+        .address-type label{
+            font-weight:normal;
+            display:flex;
+            align-items:center;
+            gap:6px;
+            cursor:pointer;
+        }
+
+        .btn{
+            background:#2874f0;
+            color:white;
+            border:none;
+            padding:12px;
+            width:100%;
+            font-size:15px;
+            font-weight:bold;
+            border-radius:8px;
+            cursor:pointer;
+            margin-top:15px;
+        }
+
+        .btn:hover{
+            background:#1f5fd1;
+        }
+
+        .back-link{
+            display:block;
+            margin-top:15px;
+            text-align:center;
+            text-decoration:none;
+            color:#2874f0;
+            font-size:14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+    <h2>Add New Address</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="full_name" placeholder="Enter full name" required>
+        </div>
+
+        <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" name="phone_number" placeholder="10-digit mobile number" required>
+        </div>
+
+        <div class="form-group">
+            <label>Address</label>
+            <textarea name="address_line" placeholder="House no, Street, Area" required></textarea>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label>City</label>
+                <input type="text" name="city" required>
+            </div>
+
+            <div class="form-group">
+                <label>State</label>
+                <input type="text" name="state" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label>Pincode</label>
+                <input type="text" name="pincode" required>
+            </div>
+
+            <div class="form-group">
+                <label>Address Type</label>
+                <select name="address_type">
+                    <option value="Home">Home</option>
+                    <option value="Office">Office</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn">Save Address</button>
+    </form>
+
+    <a href="{% url 'my_addresses' %}" class="back-link">← Back to Saved Addresses</a>
+</div>
+
+</body>
+</html>

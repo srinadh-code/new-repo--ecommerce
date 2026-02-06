@@ -10,7 +10,7 @@ from .views import (
     splash_page,
     dashboard_page,
     category_products,
-    product_detail
+    product_detail,delete_address,add_address,my_addresses,edit_address,
 )
 
 urlpatterns = [
@@ -30,5 +30,11 @@ urlpatterns = [
     
     path("category/<int:cat_id>/", category_products, name="category_products"),
     path("product/<int:product_id>/", product_detail, name="product_detail"),   
+    path("addresses/", my_addresses, name="my_addresses"),
+    path("addresses/add/", add_address, name="add_address"),
+    path("addresses/delete/<int:id>/", delete_address, name="delete_address"),
+    path("addresses/edit/<int:id>/", edit_address, name="edit_address"),
+
+
 
 ]

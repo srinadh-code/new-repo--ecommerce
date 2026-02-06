@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Address</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f1f3f6;
+            margin:0;
+            padding:0;
+        }
+
+        .page{
+            max-width:520px;
+            margin:40px auto;
+            background:white;
+            padding:25px 30px;
+            border-radius:10px;
+            box-shadow:0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        h2{ margin-top:0; }
+
+        label{
+            font-size:13px;
+            font-weight:bold;
+            margin-bottom:6px;
+            display:block;
+        }
+
+        input, textarea, select{
+            width:100%;
+            padding:10px;
+            border-radius:6px;
+            border:1px solid #ccc;
+            margin-bottom:15px;
+        }
+
+        .btn{
+            background:#2874f0;
+            color:white;
+            padding:12px;
+            border:none;
+            width:100%;
+            border-radius:8px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+    <h2>Edit Address</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Full Name</label>
+        <input name="full_name" value="{{ address.full_name }}">
+
+        <label>Phone Number</label>
+        <input name="phone_number" value="{{ address.phone_number }}">
+
+        <label>Address</label>
+        <textarea name="address_line">{{ address.address_line }}</textarea>
+
+        <label>City</label>
+        <input name="city" value="{{ address.city }}">
+
+        <label>State</label>
+        <input name="state" value="{{ address.state }}">
+
+        <label>Pincode</label>
+        <input name="pincode" value="{{ address.pincode }}">
+
+        <label>Address Type</label>
+        <select name="address_type">
+            <option value="Home" {% if address.address_type == "Home" %}selected{% endif %}>Home</option>
+            <option value="Office" {% if address.address_type == "Office" %}selected{% endif %}>Office</option>
+        </select>
+
+        <button type="submit" class="btn">Update Address</button>
+    </form>
+</div>
+
+</body>
+</html>
