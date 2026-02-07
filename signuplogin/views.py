@@ -23,7 +23,11 @@ from .serializers import (
 )
 
 class SignupView(APIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
+    
+    def get (self, request):
+        return render(request, "signup.html")
+
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
@@ -35,6 +39,8 @@ class SignupView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+    def get (self, request):
+        return render(request, "login.html")
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -162,10 +168,12 @@ def category_products(request, cat_id):
     products = Product.objects.filter(category=category)
     return render(request, "category_products.html", {"category": category, "products": products})
 from .models import Category
-
+from cart.services import count
 def dashboard_page(request):
     categories = Category.objects.all()
-    return render(request, "dashboard.html", {"categories": categories})
+    cart_count=count(request.user)
+    return render(request, "dashboard.html", {"categories": categories,"cart_count":cart_count})
+
 from django.shortcuts import render, get_object_or_404
 from .models import Product
 
@@ -249,3 +257,39 @@ def edit_address(request, id):
         return redirect("my_addresses")
 
     return render(request, "edit_address.html", {"address": address})
+
+
+# from cart.models import Wishlist
+
+# def category_products(request, cat_id):
+#     category = Category.objects.get(id=cat_id)
+#     products = Product.objects.filter(category=category)
+
+#     wishlist_ids = []
+#     if request.user.is_authenticated:
+#         wishlist_ids = Wishlist.objects.filter(
+#             user=request.user
+#         ).values_list("product_id", flat=True)
+
+#     return render(request, "category_products.html", {
+#         "category": category,
+#         "products": products,
+#         "wishlist_ids": wishlist_ids,
+#     })
+from cart.models import Wishlist
+
+def category_products(request, cat_id):
+    category = Category.objects.get(id=cat_id)
+    products = Product.objects.filter(category=category)
+
+    wishlist_ids = []
+    if request.user.is_authenticated:
+        wishlist_ids = Wishlist.objects.filter(
+            user=request.user
+        ).values_list("product_id", flat=True)
+
+    return render(request, "category_products.html", {
+        "category": category,
+        "products": products,
+        "wishlist_ids": wishlist_ids
+    })

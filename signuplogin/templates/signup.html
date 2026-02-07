@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<div class="auth-container">
+
+    <!-- LEFT PANEL -->
+    <div class="auth-left">
+        <div class="brand">
+            <h1>Welcome Page</h1>
+            <p>Sign up to continue access</p>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="auth-right">
+        <h2>Create Account</h2>
+
+        <form id="signupForm" method="post">
+            {% csrf_token %}
+
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+
+            <button type="submit">SIGN UP</button>
+        </form>
+
+        <p id="error"></p>
+    </div>
+
+</div>
+
+<script src="{% static 'js/signup.js' %}"></script>
+</body>
+</html>

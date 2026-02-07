@@ -17,17 +17,17 @@ class CartItem(models.Model):
 
 
 
-class CartItem(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cart_items")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-    created_at = models.DateTimeField(auto_now_add=True)
+# class CartItem(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cart_items")
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     quantity = models.PositiveIntegerField(default=1)
+#     created_at = models.DateTimeField(auto_now_add=True)
 
-    def subtotal(self):
-        return self.product.price * self.quantity
+#     def subtotal(self):
+#         return self.product.price * self.quantity
 
-    def __str__(self):
-        return f"{self.user.username} - {self.product.name}"
+#     def __str__(self):
+#         return f"{self.user.username} - {self.product.name}"
 
 
 class Order(models.Model):
@@ -56,3 +56,27 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.order.id} - {self.product.name}"
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wishlist_items")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "product")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name}"
+# from django.db import models
+# from django.contrib.auth.models import User
+# from signuplogin.models import Product
+
+# class Wishlist(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wishlist_items")
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     class Meta:
+#         unique_together = ("user", "product")
+
+#     def __str__(self):
+#         return f"{self.user.username} - {self.product.name}"

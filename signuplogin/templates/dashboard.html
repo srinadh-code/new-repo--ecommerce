@@ -1,214 +1,4 @@
-{% comment %} <!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
 
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            margin:0;
-            background:#f4f4f4;
-        }
-
-        /* ================= HEADER ================= */
-        .header{
-            background:#2874f0; /* light ecommerce blue */
-            color:white;
-            padding:15px 30px;
-            font-size:18px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        }
-
-        .header-right{
-            display:flex;
-            align-items:center;
-            gap:16px;
-        }
-
-        .btn-link{
-            padding:7px 14px;
-            border-radius:8px;
-            font-size:14px;
-            text-decoration:none;
-            font-weight:bold;
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-        }
-
-        .cart-btn,
-        .settings-btn{
-            background:#6f42c1;
-            color:white;
-        }
-
-        .login-btn{
-            background:lightgreen;
-            color:black;
-            border:1px solid green;
-        }
-
-        /* ================= USER DROPDOWN ================= */
-        .user-dropdown{
-            position:relative;
-        }
-
-        .user-btn{
-            background:#6f42c1;
-            color:white;
-            border:none;
-            border-radius:8px;
-            padding:7px 14px;
-            font-size:14px;
-            font-weight:bold;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            gap:6px;
-        }
-
-        .dropdown-menu{
-            position:absolute;
-            right:0;
-            top:45px;
-            background:white;
-            min-width:220px;
-            border-radius:8px;
-            box-shadow:0 6px 16px rgba(0,0,0,0.2);
-            display:none;
-            z-index:1000;
-        }
-
-        .dropdown-menu a{
-            display:block;
-            padding:12px 16px;
-            color:#333;
-            text-decoration:none;
-            font-size:14px;
-        }
-
-        .dropdown-menu a:hover{
-            background:#f1f3f6;
-        }
-
-        .dropdown-menu hr{
-            margin:6px 0;
-            border:none;
-            border-top:1px solid #eee;
-        }
-
-        /* ================= DIVIDER ================= */
-        .header-divider{
-            height:1px;
-            background:#000;
-            opacity:0.2;
-            width:100%;
-        }
-
-        /* ================= MAIN ================= */
-        .container{
-            padding:25px;
-        }
-
-        h2{
-            margin-top:0;
-        }
-
-        .categories{
-            display:grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap:15px;
-            margin-top:15px;
-        }
-
-        .cat-btn{
-            background:white;
-            padding:16px;
-            border-radius:12px;
-            border:none;
-            cursor:pointer;
-            font-weight:bold;
-            font-size:16px;
-            box-shadow:0px 3px 8px rgba(0,0,0,0.15);
-            width:100%;
-        }
-
-        .cat-btn:hover{
-            background:orange;
-            color:white;
-        }
-    </style>
-</head>
-
-<body>
-
-<!-- ================= HEADER ================= -->
-<div class="header">
-    <span>Welcome to Ecommerce</span>
-
-    <div class="header-right">
-
-        <a href="/cart/view/" class="btn-link cart-btn">🛒 Cart</a>
-
-        {% if request.user.is_authenticated %}
-        <div class="user-dropdown">
-            <button class="user-btn" onclick="toggleMenu(event)">
-                👤 {{ request.user.username }}
-            </button>
-
-            <div class="dropdown-menu" id="userMenu">
-                <a href="{% url 'profile_page' %}">My Profile</a>
-                <a href="{% url 'my_orders' %}">Orders</a>
-                <a href="{% url 'my_addresses' %}">Saved Addresses</a>
-                <a href="#">Wishlist</a>
-                <hr>
-                <a href="{% url 'logout' %}">Logout</a>
-            </div>
-        </div>
-        {% else %}
-        <a href="{% url 'login' %}" class="btn-link login-btn">🔐 Login</a>
-        {% endif %}
-
-        <a href="{% url 'settings' %}" class="btn-link settings-btn">⚙ Settings</a>
-    </div>
-</div>
-
-<!-- divider -->
-<div class="header-divider"></div>
-
-<!-- ================= MAIN ================= -->
-<div class="container">
-    <h2>Categories</h2>
-
-    <div class="categories">
-        {% for cat in categories %}
-        <a href="{% url 'category_products' cat.id %}">
-            <button class="cat-btn">{{ cat.name }}</button>
-        </a>
-        {% endfor %}
-    </div>
-</div>
-
-<!-- ================= JS ================= -->
-<script>
-function toggleMenu(event){
-    event.stopPropagation();
-    const menu = document.getElementById("userMenu");
-    menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
-
-document.addEventListener("click", function(){
-    const menu = document.getElementById("userMenu");
-    if(menu){
-        menu.style.display = "none";
-    }
-});
-</script>
-
-</body>
-</html> {% endcomment %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -223,20 +13,48 @@ document.addEventListener("click", function(){
 
         /* ================= HEADER ================= */
         .header{
-            background:#ffffff;   
-            color:white;
+            background:#ffffff;
             padding:15px 30px;
             font-size:18px;
             display:flex;
-            justify-content:space-between;
             align-items:center;
+            gap:20px;
         }
 
+        .logo{
+            color:#2874f0;
+            font-weight:bold;
+            white-space:nowrap;
+            flex:0 0 auto;
+        }
+
+        /* ================= SEARCH ================= */
+        .search-box{
+            flex:1;
+            display:flex;
+            justify-content:center;
+        }
+
+        .search-box input{
+            width:100%;
+            max-width:550px;   /* ✅ IMPORTANT FIX */
+            padding:10px 14px;
+            border-radius:20px;
+            border:1px solid #000;
+            font-size:14px;
+            outline:none;
+        }
+
+        .search-box input:focus{
+            border-color:#2874f0;
+        }
 
         .header-right{
             display:flex;
             align-items:center;
             gap:16px;
+            white-space:nowrap;
+            flex:0 0 auto;
         }
 
         .btn-link{
@@ -252,7 +70,7 @@ document.addEventListener("click", function(){
 
         .cart-btn,
         .settings-btn{
-            background:#6f42c1;
+            background:#6a5acd;
             color:white;
         }
 
@@ -268,7 +86,7 @@ document.addEventListener("click", function(){
         }
 
         .user-btn{
-            background:#6f42c1;
+            background:#6a5acd;
             color:white;
             border:none;
             border-radius:8px;
@@ -314,7 +132,7 @@ document.addEventListener("click", function(){
         /* ================= DIVIDER ================= */
         .header-divider{
             height:1px;
-            background:#e0e0e0;  
+            background:#e0e0e0;
             width:100%;
         }
 
@@ -327,28 +145,44 @@ document.addEventListener("click", function(){
             margin-top:0;
         }
 
+        /* ================= CATEGORY GRID ================= */
         .categories{
             display:grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap:15px;
-            margin-top:15px;
+            grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+            gap:18px;
+            margin-top:20px;
         }
 
-        .cat-btn{
+        .cat-card{
             background:white;
-            padding:16px;
-            border-radius:12px;
-            border:none;
-            cursor:pointer;
-            font-weight:bold;
-            font-size:16px;
-            box-shadow:0px 3px 8px rgba(0,0,0,0.15);
-            width:100%;
+            border-radius:14px;
+            padding:15px;
+            text-align:center;
+            box-shadow:0 4px 10px rgba(0,0,0,0.15);
+            transition:0.2s ease;
         }
 
-        .cat-btn:hover{
-            background:orange;
-            color:white;
+        .cat-card:hover{
+            transform:translateY(-5px);
+            box-shadow:0 8px 18px rgba(0,0,0,0.25);
+        }
+
+        .cat-card img{
+            width:120px;
+            height:120px;
+            object-fit:contain;
+            margin-bottom:10px;
+        }
+
+        .cat-card p{
+            margin:0;
+            font-weight:bold;
+            font-size:15px;
+            color:#111;
+        }
+
+        a{
+            text-decoration:none;
         }
     </style>
 </head>
@@ -357,12 +191,29 @@ document.addEventListener("click", function(){
 
 <!-- ================= HEADER ================= -->
 <div class="header">
-    <span style="color:#2874f0; font-weight:bold;">
-    Welcome to Ecommerce
-</span>
+
+    <div class="logo">
+        Welcome to Ecommerce
+    </div>
+
+    <!-- 🔍 SEARCH BAR -->
+    <form class="search-box" method="get" action="{% url 'search' %}">
+        <input
+            type="text"
+            name="q"
+            placeholder="Search for products, categories..."
+            required
+        >
+    </form>
 
     <div class="header-right">
-        <a href="/cart/view/" class="btn-link cart-btn">🛒 Cart</a>
+        <a href="/cart/view/" class="btn-link cart-btn">
+            🛒 Cart ({{ cart_count }})
+        </a>
+
+        <a href="{% url 'wishlist' %}" class="btn-link cart-btn">
+            ❤️ Wishlist ({{ wishlist_count }})
+        </a>
 
         {% if request.user.is_authenticated %}
         <div class="user-dropdown">
@@ -374,7 +225,7 @@ document.addEventListener("click", function(){
                 <a href="{% url 'profile_page' %}">My Profile</a>
                 <a href="{% url 'my_orders' %}">Orders</a>
                 <a href="{% url 'my_addresses' %}">Saved Addresses</a>
-                <a href="#">Wishlist</a>
+                <a href="{% url 'wishlist' %}">Wishlist</a>
                 <hr>
                 <a href="{% url 'logout' %}">Logout</a>
             </div>
@@ -387,7 +238,6 @@ document.addEventListener("click", function(){
     </div>
 </div>
 
-<!-- ✅ DIVIDER MUST BE HERE -->
 <div class="header-divider"></div>
 
 <!-- ================= MAIN ================= -->
@@ -397,7 +247,14 @@ document.addEventListener("click", function(){
     <div class="categories">
         {% for cat in categories %}
         <a href="{% url 'category_products' cat.id %}">
-            <button class="cat-btn">{{ cat.name }}</button>
+            <div class="cat-card">
+                {% if cat.image %}
+                    <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/120">
+                {% endif %}
+                <p>{{ cat.name }}</p>
+            </div>
         </a>
         {% endfor %}
     </div>

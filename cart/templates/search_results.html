@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+    <style>
+        body{font-family:Arial;background:#f4f4f4;margin:0}
+        .container{padding:25px}
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:16px;
+            margin-top:20px;
+        }
+        .card{
+            background:white;
+            padding:15px;
+            border-radius:12px;
+            box-shadow:0 3px 8px rgba(0,0,0,0.15);
+            text-align:center;
+        }
+        a{text-decoration:none;color:black;font-weight:bold}
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <a href="{% url 'dashboard' %}">⬅ Back to Dashboard</a>
+
+    <h2>Search results for "{{ query }}"</h2>
+
+    {% if categories %}
+    <h3>Categories</h3>
+    <div class="grid">
+        {% for cat in categories %}
+            <a class="card" href="{% url 'category_products' cat.id %}">
+                {{ cat.name }}
+            </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if products %}
+    <h3 style="margin-top:30px;">Products</h3>
+    <div class="grid">
+        {% for p in products %}
+            <a class="card" href="{% url 'product_detail' p.id %}">
+                {{ p.name }}<br>₹{{ p.price }}
+            </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not products and not categories %}
+        <p>No results found.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

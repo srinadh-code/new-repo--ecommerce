@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Wishlist</title>
+    <style>
+        body{font-family:Arial;background:#f4f4f4;padding:20px;}
+        h2{margin-bottom:20px;}
+
+        .card{
+            background:white;
+            padding:16px;
+            border-radius:10px;
+            box-shadow:0 4px 10px rgba(0,0,0,.15);
+            margin-bottom:15px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .actions a{
+            margin-left:10px;
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        .view{color:#2874f0;}
+        .remove{color:red;}
+        .cart{color:green;}
+    </style>
+</head>
+<body>
+
+<h2>My Wishlist</h2>
+
+{% for item in wishlist_items %}
+<div class="card">
+    <div>
+        <h4>{{ item.product.name }}</h4>
+        <p>₹ {{ item.product.price }}</p>
+    </div>
+
+    <div class="actions">
+        <a class="view" href="{% url 'product_detail' item.product.id %}">View</a>
+        <a class="cart" href="{% url 'wishlist_to_cart' item.product.id %}">Move to Cart</a>
+        <a class="remove" href="{% url 'remove_from_wishlist' item.product.id %}">Remove</a>
+    </div>
+</div>
+{% empty %}
+<p>No items in wishlist.</p>
+{% endfor %}
+
+</body>
+</html>
