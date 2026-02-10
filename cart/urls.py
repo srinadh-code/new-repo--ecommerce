@@ -12,6 +12,7 @@ urlpatterns = [
 
     #  Buy 
     path("search/", search_view, name="search"),
+    
 
     path("product/<int:product_id>/", views.product_detail, name="product_detail"),
     path("buy/<int:product_id>/", views.place_order_single, name="place_order_single"),

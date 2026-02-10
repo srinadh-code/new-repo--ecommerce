@@ -13,7 +13,16 @@ from .models import Category,Product
 from rest_framework.permissions import  AllowAny
 from .models import Category
 from django.shortcuts import render, get_object_or_404
-from .models import Product
+
+
+from django.db.models import Count
+from cart.models import CartItem, Wishlist
+from .models import Category, Product
+
+from django.contrib.auth.decorators import login_required
+from .models import Address
+from django.db import IntegrityError
+from cart.services import count
 from .serializers import (
     SignupSerializer,
     LoginSerializer,
@@ -22,28 +31,99 @@ from .serializers import (
     ResetPasswordSerializer
 )
 
-class SignupView(APIView):
-    # permission_classes = [AllowAny]
+# class SignupView(APIView):
+#     permission_classes = [AllowAny]
     
-    def get (self, request):
+#     def get (self, request):
+#         return render(request, "signup.html")
+
+#     def post(self, request):
+#         serializer = SignupSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = serializer.save()
+#             login(request, user) 
+#             return redirect("dashboard")
+#         return Response(serializer.errors, status=400)
+
+
+# class LoginView(APIView):
+#     permission_classes = [AllowAny]
+#     def get (self, request):
+#         return render(request, "login.html")
+
+#     def post(self, request):
+#         serializer = LoginSerializer(data=request.data)
+
+#         if serializer.is_valid():
+#             user = authenticate(
+#                 username=serializer.validated_data["username"],
+#                 password=serializer.validated_data["password"]
+#             )
+
+#             if user:
+#                 login(request, user)
+#                 return redirect("splash")
+
+#             return Response(
+#                 {"msg": "Invalid username or password"},
+#                 status=status.HTTP_401_UNAUTHORIZED
+#             )
+
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+class SignupView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
         return render(request, "signup.html")
 
     def post(self, request):
-        serializer = SignupSerializer(data=request.data)
+        serializer = SignupSerializer(data=request.POST)
+
         if serializer.is_valid():
-            user = serializer.save()
-            login(request, user) 
-            return redirect("dashboard")
-        return Response(serializer.errors, status=400)
+            try:
+                user = serializer.save()
+                login(request, user)
+                return redirect("dashboard")
+
+            except IntegrityError:
+                # THIS STOPS THE CRASH
+                return render(
+                    request,
+                    "signup.html",
+                    {
+                        "error": {
+                            "username": ["Username already exists"]
+                        },
+                        "data": request.POST
+                    }
+                )
+
+        return render(
+            request,
+            "signup.html",
+            {
+                "error": serializer.errors,
+                "data": request.POST
+            }
+        )
+
 
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    def get (self, request):
+
+    def get(self, request):
         return render(request, "login.html")
 
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.POST)
 
         if serializer.is_valid():
             user = authenticate(
@@ -55,12 +135,19 @@ class LoginView(APIView):
                 login(request, user)
                 return redirect("splash")
 
-            return Response(
-                {"msg": "Invalid username or password"},
-                status=status.HTTP_401_UNAUTHORIZED
+            #  INVALID LOGIN MESSAGE
+            return render(
+                request,
+                "login.html",
+                {"error": "Invalid username or password"}
             )
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return render(
+            request,
+            "login.html",
+            {"error": "Invalid input"}
+        )
+
 
 class ForgotPasswordView(APIView):
     def post(self, request):
@@ -167,19 +254,95 @@ def category_products(request, cat_id):
     category = Category.objects.get(id=cat_id)
     products = Product.objects.filter(category=category)
     return render(request, "category_products.html", {"category": category, "products": products})
-from .models import Category
-from cart.services import count
+
+
+# def dashboard_page(request):
+#     categories = Category.objects.all()
+
+#     #  TRENDING (KEEP THIS AS IT IS)
+#     trending_products = (
+#         Product.objects
+#         .annotate(cart_count=Count("cartitem"))  # ← correct related_name
+#         .filter(cart_count__gt=0)
+#         .order_by("-cart_count")[:4]
+#     )
+
+#     #  RECOMMENDED — ONLY FROM WISHLIST
+#     recommended_products = Product.objects.none()
+
+#     if request.user.is_authenticated:
+#         wishlist_category_ids = Wishlist.objects.filter(
+#             user=request.user
+#         ).values_list("product__category", flat=True)
+
+#         recommended_products = Product.objects.filter(
+#             category__in=wishlist_category_ids
+#         ).exclude(
+#             wishlist__user=request.user   # don’t show same wishlisted product
+#         ).distinct()[:4]
+
+#     #  FALLBACKS (so dashboard never looks empty)
+#     if not trending_products.exists():
+#         trending_products = Product.objects.all()[:4]
+
+#     if not recommended_products.exists():
+#         recommended_products = Product.objects.all()[:4]
+
+#     return render(request, "dashboard.html", {
+#         "categories": categories,
+#         "trending_products": trending_products,
+#         "recommended_products": recommended_products,
+#     })
+from django.db.models import Count
+from django.db.models.functions import Coalesce
+
 def dashboard_page(request):
     categories = Category.objects.all()
-    cart_count=count(request.user)
-    return render(request, "dashboard.html", {"categories": categories,"cart_count":cart_count})
 
-from django.shortcuts import render, get_object_or_404
-from .models import Product
+    # 🔥 TRENDING (UNCHANGED)
+    trending_products = (
+        Product.objects
+        .annotate(cart_count=Count("cartitem"))
+        .filter(cart_count__gt=0)
+        .order_by("-cart_count")[:4]
+    )
 
-# def product_detail(request, id):
-#     product = get_object_or_404(Product, id=id)
-#     return render(request, "product_detail.html", {"product": product})
+    # 🎯 RECOMMENDED (UNCHANGED)
+    recommended_products = Product.objects.none()
+    if request.user.is_authenticated:
+        wishlist_category_ids = Wishlist.objects.filter(
+            user=request.user
+        ).values_list("product__category", flat=True)
+
+        recommended_products = Product.objects.filter(
+            category__in=wishlist_category_ids
+        ).exclude(
+            wishlist__user=request.user
+        ).distinct()[:4]
+
+    # ✅ FALLBACKS (UNCHANGED)
+    if not trending_products.exists():
+        trending_products = Product.objects.all()[:4]
+
+    if not recommended_products.exists():
+        recommended_products = Product.objects.all()[:4]
+
+    # 💸 OFFERS (NEW – SAFE)
+    offer_products = (
+        Product.objects
+        .annotate(
+            cart_count=Coalesce(Count("cartitem"), 0),
+            wishlist_count=Coalesce(Count("wishlist"), 0)
+        )
+        .order_by("cart_count", "wishlist_count")[:4]
+    )
+
+    return render(request, "dashboard.html", {
+        "categories": categories,
+        "trending_products": trending_products,
+        "recommended_products": recommended_products,
+        "offer_products": offer_products,   # ✅ NEW
+    })
 
 
 def product_detail(request, product_id):
@@ -203,11 +366,6 @@ def my_orders(request):
 def logout_view(request):
     logout(request)
     return redirect("login")
-
-
-
-from django.contrib.auth.decorators import login_required
-from .models import Address
 
 @login_required
 def my_addresses(request):
@@ -259,23 +417,7 @@ def edit_address(request, id):
     return render(request, "edit_address.html", {"address": address})
 
 
-# from cart.models import Wishlist
 
-# def category_products(request, cat_id):
-#     category = Category.objects.get(id=cat_id)
-#     products = Product.objects.filter(category=category)
-
-#     wishlist_ids = []
-#     if request.user.is_authenticated:
-#         wishlist_ids = Wishlist.objects.filter(
-#             user=request.user
-#         ).values_list("product_id", flat=True)
-
-#     return render(request, "category_products.html", {
-#         "category": category,
-#         "products": products,
-#         "wishlist_ids": wishlist_ids,
-#     })
 from cart.models import Wishlist
 
 def category_products(request, cat_id):

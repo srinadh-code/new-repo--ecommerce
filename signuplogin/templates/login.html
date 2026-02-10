@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -36,6 +36,61 @@
                 {{ error }}
             {% endif %}
         </p>
+
+        <p class="switch">
+            Don’t have an account?
+            <a href="{% url 'signup' %}">Sign up</a>
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html> {% endcomment %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .error-text{
+            color: red;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-left">
+        <div class="brand">
+            <h1>Welcome Back</h1>
+            <p>Login to continue access</p>
+        </div>
+    </div>
+
+    <div class="auth-right">
+        <h2>Login</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+
+            <button type="submit">LOGIN</button>
+        </form>
+
+        {% if error %}
+            <div class="error-text">{{ error }}</div>
+        {% endif %}
 
         <p class="switch">
             Don’t have an account?

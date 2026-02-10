@@ -38,10 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'signuplogin',
-    'cart',
+    # 'cart',
     'Userinfo',
 
     'rest_framework',
+    "cart.apps.CartConfig",
 ]
 
 MIDDLEWARE = [
@@ -142,6 +143,9 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = "ones12245@gmail.com"
 EMAIL_HOST_PASSWORD = "cqml qzxg dmuj xawn"
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER 
+
 
 
 

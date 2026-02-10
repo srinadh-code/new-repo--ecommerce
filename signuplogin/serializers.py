@@ -2,15 +2,46 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 
+# class SignupSerializer(serializers.Serializer):
+#     username = serializers.CharField()
+#     email = serializers.EmailField()
+#     password = serializers.CharField(write_only=True)
+#     confirm_password = serializers.CharField(write_only=True)
+
+#     def validate(self, data):
+#         if data["password"] != data["confirm_password"]:
+#             raise serializers.ValidationError("Passwords do not match")
+#         return data
+
+#     def create(self, validated_data):
+#         validated_data.pop("confirm_password")
+#         return User.objects.create_user(
+#             username=validated_data["username"],
+#             email=validated_data["email"],
+#             password=validated_data["password"]
+#         )
+from rest_framework import serializers
+from django.contrib.auth.models import User
+
+
 class SignupSerializer(serializers.Serializer):
     username = serializers.CharField()
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
 
+    # ✅ EMAIL UNIQUE CHECK
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists")
+        return value
+
+    # ✅ PASSWORD MATCH CHECK
     def validate(self, data):
         if data["password"] != data["confirm_password"]:
-            raise serializers.ValidationError("Passwords do not match")
+            raise serializers.ValidationError({
+                "confirm_password": "Passwords do not match"
+            })
         return data
 
     def create(self, validated_data):
@@ -20,6 +51,7 @@ class SignupSerializer(serializers.Serializer):
             email=validated_data["email"],
             password=validated_data["password"]
         )
+
 
 
 class LoginSerializer(serializers.Serializer):

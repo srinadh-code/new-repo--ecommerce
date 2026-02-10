@@ -2,7 +2,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-
+from django.db import models
+from django.contrib.auth.models import User
+from decimal import Decimal
 class PasswordResetOTP(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="otps")
     otp = models.CharField(max_length=6)
@@ -20,7 +22,7 @@ class Banner(models.Model):
 
     def __str__(self):
         return self.title if self.title else "Banner"
-from django.db import models
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -28,6 +30,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
 
 
 class Product(models.Model):
@@ -38,8 +41,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-from django.db import models
-from django.contrib.auth.models import User
+
+    @property
+    def offer_price(self):
+        return (self.price * Decimal("0.7")).quantize(Decimal("0.01"))  # 30% OFF
+
+
 
 class Address(models.Model):
     ADDRESS_TYPE_CHOICES = (

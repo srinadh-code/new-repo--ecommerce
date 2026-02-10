@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -39,5 +39,104 @@
 </div>
 
 <script src="{% static 'js/signup.js' %}"></script>
+</body>
+</html> {% endcomment %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        .error-text {
+            color: red;
+            font-size: 13px;
+            margin: 4px 0 10px;
+        }
+
+        .switch {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .switch a {
+            color: #7b2cff;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .switch a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+
+    <!-- LEFT PANEL -->
+    <div class="auth-left">
+        <div class="brand">
+            <h1>Welcome Page</h1>
+            <p>Sign up to continue access</p>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="auth-right">
+        <h2>Create Account</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- USERNAME -->
+            <input type="text" name="username" placeholder="Username"
+                   value="{{ data.username|default:'' }}">
+            {% if error.username %}
+                <div class="error-text">{{ error.username.0 }}</div>
+            {% endif %}
+
+            <!-- EMAIL -->
+            <input type="email" name="email" placeholder="Email"
+                   value="{{ data.email|default:'' }}">
+            {% if error.email %}
+                <div class="error-text">{{ error.email.0 }}</div>
+            {% endif %}
+
+            <!-- PASSWORD -->
+            <input type="password" name="password" placeholder="Password">
+            {% if error.password %}
+                <div class="error-text">{{ error.password.0 }}</div>
+            {% endif %}
+
+            <!-- CONFIRM PASSWORD -->
+            <input type="password" name="confirm_password" placeholder="Confirm Password">
+            {% if error.confirm_password %}
+                <div class="error-text">{{ error.confirm_password.0 }}</div>
+            {% endif %}
+
+            <!-- GENERIC ERROR -->
+            {% if error.non_field_errors %}
+                <div class="error-text">{{ error.non_field_errors.0 }}</div>
+            {% endif %}
+
+            <button type="submit">SIGN UP</button>
+        </form>
+
+        <!--  LOGIN LINK AT BOTTOM -->
+        <div class="switch">
+            Already have an account?
+            <a href="{% url 'login' %}">Login</a>
+        </div>
+
+    </div>
+
+</div>
+
 </body>
 </html>
