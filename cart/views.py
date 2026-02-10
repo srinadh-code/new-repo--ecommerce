@@ -90,11 +90,7 @@ def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by("-created_at")
     return render(request, "my_orders.html", {"orders": orders})
 
-#  Product Detail Page 
-@login_required
-def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    return render(request, "product_detail.html", {"product": product})
+
 
 #  Place Order from product detail page
 @login_required

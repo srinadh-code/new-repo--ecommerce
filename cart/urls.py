@@ -14,7 +14,7 @@ urlpatterns = [
     path("search/", search_view, name="search"),
     
 
-    path("product/<int:product_id>/", views.product_detail, name="product_detail"),
+    # path("product/<int:product_id>/", views.product_detail, name="product_detail"),
     path("buy/<int:product_id>/", views.place_order_single, name="place_order_single"),
     path("order-success/<int:order_id>/", views.order_success, name="order_success"),
     path("delete-order/<int:order_id>/", views.delete_order, name="delete_order"),

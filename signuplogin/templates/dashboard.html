@@ -129,8 +129,8 @@
         }
 
         .cat-card:hover{
-            transform:translateY(-6px) scale(1.03);
-            box-shadow:0 18px 34px rgba(255,160,120,0.35);
+            transform:translateY(-10px) scale(1.03);
+            box-shadow:0 18px 34px rgba(236, 81, 207, 0.35);
         }
 
         .cat-card img{
@@ -232,6 +232,30 @@
                 grid-template-columns:1fr;
             }
         }
+        .offer-badge{
+    position:absolute;
+    top:12px;
+    left:12px;
+    background:#ff5252;
+    color:white;
+    font-size:12px;
+    padding:4px 8px;
+    border-radius:8px;
+    font-weight:700;
+}
+
+.old-price{
+    text-decoration:line-through;
+    color:#888;
+    font-size:13px;
+}
+
+.new-price{
+    color:#2e7d32;
+    font-size:16px;
+    font-weight:700;
+}
+
     </style>
 </head>
 
@@ -328,7 +352,7 @@
 
 </div>
 
-<!-- ================= OFFERS ================= -->
+{% comment %} <!-- ================= OFFERS ================= -->
 <div class="dashboard-sections">
 
     <div class="section-box">
@@ -373,6 +397,54 @@
             </a>
             {% empty %}
             <p>No offers available</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div> {% endcomment %}
+
+<!-- ================= HOT DEALS + RECENTLY VIEWED ================= -->
+<div class="dashboard-sections">
+
+    <!-- 🔥 HOT DEALS -->
+    <div class="section-box">
+        <h3> Hot Deals & Offers</h3>
+
+        <div class="mini-products">
+            {% for product in offer_products %}
+            <a href="{% url 'product_detail' product.id %}" class="product-link">
+                <div class="mini-card" style="position:relative;">
+
+                    <div class="offer-badge">30% OFF</div>
+
+                    <img src="{{ product.image.url }}">
+                    <p>{{ product.name }}</p>
+
+                    <span class="old-price">₹{{ product.price }}</span><br>
+                    <span class="new-price">₹{{ product.offer_price }}</span>
+                </div>
+            </a>
+            {% empty %}
+            <p>No offers available</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 🕒 RECENTLY VIEWED -->
+    <div class="section-box">
+        <h3>🕒 Recently Viewed</h3>
+
+        <div class="mini-products">
+            {% for product in recently_viewed_products %}
+            <a href="{% url 'product_detail' product.id %}" class="product-link">
+                <div class="mini-card">
+                    <img src="{{ product.image.url }}">
+                    <p>{{ product.name }}</p>
+                    <span>₹{{ product.price }}</span>
+                </div>
+            </a>
+            {% empty %}
+            <p>No recently viewed products</p>
             {% endfor %}
         </div>
     </div>

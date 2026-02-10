@@ -14,11 +14,9 @@ from rest_framework.permissions import  AllowAny
 from .models import Category
 from django.shortcuts import render, get_object_or_404
 
-
+from django.contrib.auth import logout
 from django.db.models import Count
 from cart.models import CartItem, Wishlist
-from .models import Category, Product
-
 from django.contrib.auth.decorators import login_required
 from .models import Address
 from django.db import IntegrityError
@@ -30,53 +28,6 @@ from .serializers import (
     VerifyOtpSerializer,
     ResetPasswordSerializer
 )
-
-# class SignupView(APIView):
-#     permission_classes = [AllowAny]
-    
-#     def get (self, request):
-#         return render(request, "signup.html")
-
-#     def post(self, request):
-#         serializer = SignupSerializer(data=request.data)
-#         if serializer.is_valid():
-#             user = serializer.save()
-#             login(request, user) 
-#             return redirect("dashboard")
-#         return Response(serializer.errors, status=400)
-
-
-# class LoginView(APIView):
-#     permission_classes = [AllowAny]
-#     def get (self, request):
-#         return render(request, "login.html")
-
-#     def post(self, request):
-#         serializer = LoginSerializer(data=request.data)
-
-#         if serializer.is_valid():
-#             user = authenticate(
-#                 username=serializer.validated_data["username"],
-#                 password=serializer.validated_data["password"]
-#             )
-
-#             if user:
-#                 login(request, user)
-#                 return redirect("splash")
-
-#             return Response(
-#                 {"msg": "Invalid username or password"},
-#                 status=status.HTTP_401_UNAUTHORIZED
-#             )
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
 class SignupView(APIView):
     permission_classes = [AllowAny]
 
@@ -113,8 +64,6 @@ class SignupView(APIView):
                 "data": request.POST
             }
         )
-
-
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -256,103 +205,92 @@ def category_products(request, cat_id):
     return render(request, "category_products.html", {"category": category, "products": products})
 
 
-# def dashboard_page(request):
-#     categories = Category.objects.all()
-
-#     #  TRENDING (KEEP THIS AS IT IS)
-#     trending_products = (
-#         Product.objects
-#         .annotate(cart_count=Count("cartitem"))  # ← correct related_name
-#         .filter(cart_count__gt=0)
-#         .order_by("-cart_count")[:4]
-#     )
-
-#     #  RECOMMENDED — ONLY FROM WISHLIST
-#     recommended_products = Product.objects.none()
-
-#     if request.user.is_authenticated:
-#         wishlist_category_ids = Wishlist.objects.filter(
-#             user=request.user
-#         ).values_list("product__category", flat=True)
-
-#         recommended_products = Product.objects.filter(
-#             category__in=wishlist_category_ids
-#         ).exclude(
-#             wishlist__user=request.user   # don’t show same wishlisted product
-#         ).distinct()[:4]
-
-#     #  FALLBACKS (so dashboard never looks empty)
-#     if not trending_products.exists():
-#         trending_products = Product.objects.all()[:4]
-
-#     if not recommended_products.exists():
-#         recommended_products = Product.objects.all()[:4]
-
-#     return render(request, "dashboard.html", {
-#         "categories": categories,
-#         "trending_products": trending_products,
-#         "recommended_products": recommended_products,
-#     })
-from django.db.models import Count
-from django.db.models.functions import Coalesce
-
 def dashboard_page(request):
     categories = Category.objects.all()
-
-    # 🔥 TRENDING (UNCHANGED)
+    # ================= TRENDING =================
     trending_products = (
         Product.objects
         .annotate(cart_count=Count("cartitem"))
         .filter(cart_count__gt=0)
         .order_by("-cart_count")[:4]
     )
+    if not trending_products.exists():
+        trending_products = Product.objects.all()[:4]
 
-    # 🎯 RECOMMENDED (UNCHANGED)
+    # ================= RECOMMENDED (WISHLIST BASED) =================
     recommended_products = Product.objects.none()
+
     if request.user.is_authenticated:
         wishlist_category_ids = Wishlist.objects.filter(
             user=request.user
         ).values_list("product__category", flat=True)
 
-        recommended_products = Product.objects.filter(
-            category__in=wishlist_category_ids
-        ).exclude(
-            wishlist__user=request.user
-        ).distinct()[:4]
-
-    # ✅ FALLBACKS (UNCHANGED)
-    if not trending_products.exists():
-        trending_products = Product.objects.all()[:4]
+        recommended_products = (
+            Product.objects
+            .filter(category__in=wishlist_category_ids)
+            .exclude(wishlist__user=request.user)
+            .distinct()[:4]
+        )
 
     if not recommended_products.exists():
         recommended_products = Product.objects.all()[:4]
 
-    # 💸 OFFERS (NEW – SAFE)
+    # ================= OFFERS (LOW ENGAGEMENT PRODUCTS) =================
     offer_products = (
         Product.objects
         .annotate(
-            cart_count=Coalesce(Count("cartitem"), 0),
-            wishlist_count=Coalesce(Count("wishlist"), 0)
+            cart_count=Count("cartitem"),
+            wishlist_count=Count("wishlist")
         )
-        .order_by("cart_count", "wishlist_count")[:4]
+        .filter(cart_count__lte=1, wishlist_count__lte=1)
+        .order_by("?")[:4]
     )
+
+  
+      # -------- RECENTLY VIEWED --------
+    recent_ids = request.session.get("recently_viewed", [])
+    recently_viewed_products = Product.objects.filter(id__in=recent_ids)
+
+    # Keep order same as session
+    recently_viewed_products = sorted(
+        recently_viewed_products,
+        key=lambda x: recent_ids.index(x.id)
+    )
+    # --------------------------------
 
     return render(request, "dashboard.html", {
         "categories": categories,
         "trending_products": trending_products,
         "recommended_products": recommended_products,
-        "offer_products": offer_products,   # ✅ NEW
+        "offer_products": offer_products,
+        "recently_viewed_products": recently_viewed_products,
     })
 
 
+
+def product_detail(request, product_id):
+    print(" PRODUCT DETAIL VIEW HIT:", product_id)
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    return render(request, "product_detail.html", {"product": product})
 
+    viewed = request.session.get("recently_viewed", [])
+
+    if product_id in viewed:
+        viewed.remove(product_id)
+
+    viewed.insert(0, product_id)
+
+    request.session["recently_viewed"] = viewed[:4]
+    request.session.modified = True   # ⭐ THIS IS THE FIX ⭐
+
+    return render(request, "product_detail.html", {
+        "product": product
+    })
+
+    
 def settings_page(request):
     return render(request, "settings.html")
-from django.shortcuts import redirect, render
-from django.contrib.auth import logout
+
 
 def set_language(request):
     if request.method == "POST":
