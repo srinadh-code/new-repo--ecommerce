@@ -352,57 +352,6 @@
 
 </div>
 
-{% comment %} <!-- ================= OFFERS ================= -->
-<div class="dashboard-sections">
-
-    <div class="section-box">
-        <h3> 💸 Hot Deals & Offers</h3>
-
-        <div class="mini-products">
-            {% for product in offer_products %}
-            <a href="{% url 'product_detail' product.id %}" class="product-link">
-                <div class="mini-card" style="position:relative;">
-
-                    <!-- OFFER BADGE -->
-                    <div style="
-                        position:absolute;
-                        top:12px;
-                        left:12px;
-                        background:#ff5252;
-                        color:white;
-                        font-size:12px;
-                        padding:4px 8px;
-                        border-radius:8px;
-                        font-weight:700;
-                    ">
-                        30% OFF
-                    </div>
-
-                    <img src="{{ product.image.url }}">
-
-                    <p>{{ product.name }}</p>
-
-                    <!-- ORIGINAL PRICE -->
-                    <span style="text-decoration:line-through; color:#888; font-size:13px;">
-                        ₹{{ product.price }}
-                    </span>
-                    <br>
-
-                    <!-- DISCOUNTED PRICE -->
-                    <span style="color:#2e7d32; font-size:16px; font-weight:700;">
-                        ₹{{ product.offer_price }}
-                    </span>
-
-                </div>
-            </a>
-            {% empty %}
-            <p>No offers available</p>
-            {% endfor %}
-        </div>
-    </div>
-
-</div> {% endcomment %}
-
 <!-- ================= HOT DEALS + RECENTLY VIEWED ================= -->
 <div class="dashboard-sections">
 

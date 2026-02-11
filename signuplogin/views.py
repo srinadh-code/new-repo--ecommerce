@@ -20,6 +20,9 @@ from django.db.models import Count
 from cart.models import CartItem, Wishlist
 from django.db import IntegrityError
 from cart.services import count
+from django.db.models import Avg
+from .models import Product, Review
+
 from .serializers import (
     SignupSerializer,
     LoginSerializer,
@@ -264,26 +267,6 @@ def dashboard_page(request):
     })
 
 
-
-def product_detail(request, product_id):
-    print(" PRODUCT DETAIL VIEW HIT:", product_id)
-def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-
-    viewed = request.session.get("recently_viewed", [])
-
-    if product_id in viewed:
-        viewed.remove(product_id)
-
-    viewed.insert(0, product_id)
-
-    request.session["recently_viewed"] = viewed[:4]
-    request.session.modified = True   
-
-    return render(request, "product_detail.html", {
-        "product": product
-    })
-
     
 def settings_page(request):
     return render(request, "settings.html")
@@ -367,4 +350,51 @@ def category_products(request, cat_id):
         "category": category,
         "products": products,
         "wishlist_ids": wishlist_ids
+    })
+
+
+
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    #  SAVE REVIEW
+    if request.method == "POST":
+        if request.user.is_authenticated:
+
+            rating = request.POST.get("rating")
+            comment = request.POST.get("comment")
+
+            if rating and comment:
+                Review.objects.update_or_create(
+                    product=product,
+                    user=request.user,
+                    defaults={
+                        "rating": int(rating),
+                        "comment": comment
+                    }
+                )
+
+            return redirect("product_detail", product_id=product.id)
+
+    # CALCULATE DATA 
+    reviews = product.reviews.all()
+    average_rating = reviews.aggregate(Avg("rating"))["rating__avg"] or 0
+    total_reviews = reviews.count()
+
+    # RECENTLY VIEWED 
+    viewed = request.session.get("recently_viewed", [])
+
+    if product_id in viewed:
+        viewed.remove(product_id)
+
+    viewed.insert(0, product_id)
+    request.session["recently_viewed"] = viewed[:4]
+    request.session.modified = True
+
+    return render(request, "product_detail.html", {
+        "product": product,
+        "reviews": reviews,
+        "average_rating": average_rating,
+        "total_reviews": total_reviews
     })
