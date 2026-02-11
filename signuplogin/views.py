@@ -1,8 +1,8 @@
 import random
 from datetime import timedelta
+from django.utils import timezone
 from django.shortcuts import redirect,render
 from django.core.mail import send_mail
-from django.utils import timezone
 from django.contrib.auth.hashers import  make_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,13 +12,12 @@ from django.contrib.auth import authenticate, login
 from .models import Category,Product
 from rest_framework.permissions import  AllowAny
 from .models import Category
-from django.shortcuts import render, get_object_or_404
-
+from django.shortcuts import render, get_object_or_404,redirect
+from django.contrib.auth.decorators import login_required
+from .models import Address
 from django.contrib.auth import logout
 from django.db.models import Count
 from cart.models import CartItem, Wishlist
-from django.contrib.auth.decorators import login_required
-from .models import Address
 from django.db import IntegrityError
 from cart.services import count
 from .serializers import (
@@ -207,7 +206,7 @@ def category_products(request, cat_id):
 
 def dashboard_page(request):
     categories = Category.objects.all()
-    # ================= TRENDING =================
+    # TRENDING 
     trending_products = (
         Product.objects
         .annotate(cart_count=Count("cartitem"))
@@ -217,7 +216,7 @@ def dashboard_page(request):
     if not trending_products.exists():
         trending_products = Product.objects.all()[:4]
 
-    # ================= RECOMMENDED (WISHLIST BASED) =================
+    # RECOMMENDED (WISHLIST BASED) 
     recommended_products = Product.objects.none()
 
     if request.user.is_authenticated:
@@ -235,7 +234,7 @@ def dashboard_page(request):
     if not recommended_products.exists():
         recommended_products = Product.objects.all()[:4]
 
-    # ================= OFFERS (LOW ENGAGEMENT PRODUCTS) =================
+    #  OFFERS (LOW ENGAGEMENT PRODUCTS) 
     offer_products = (
         Product.objects
         .annotate(
@@ -245,8 +244,6 @@ def dashboard_page(request):
         .filter(cart_count__lte=1, wishlist_count__lte=1)
         .order_by("?")[:4]
     )
-
-  
       # -------- RECENTLY VIEWED --------
     recent_ids = request.session.get("recently_viewed", [])
     recently_viewed_products = Product.objects.filter(id__in=recent_ids)
@@ -281,7 +278,7 @@ def product_detail(request, product_id):
     viewed.insert(0, product_id)
 
     request.session["recently_viewed"] = viewed[:4]
-    request.session.modified = True   # ⭐ THIS IS THE FIX ⭐
+    request.session.modified = True   
 
     return render(request, "product_detail.html", {
         "product": product
@@ -332,9 +329,7 @@ def delete_address(request, id):
     address = Address.objects.get(id=id, user=request.user)
     address.delete()
     return redirect("my_addresses")
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Address
+
 
 @login_required
 def edit_address(request, id):
