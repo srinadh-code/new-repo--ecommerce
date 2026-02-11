@@ -373,3 +373,24 @@ def category_products(request, cat_id):
         "products": products,
         "wishlist_ids": wishlist_ids
     })
+from django.shortcuts import get_object_or_404
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+
+    # Rating breakdown
+    from django.db.models import Count
+    rating_counts = product.reviews.values('rating').annotate(count=Count('rating'))
+    rating_dict = {item['rating']: item['count'] for item in rating_counts}
+
+    breakdown = []
+    for i in range(5, 0, -1):
+        breakdown.append({
+            "star": i,
+            "count": rating_dict.get(i, 0)
+        })
+
+    return render(request, "product_detail.html", {
+        "product": product,
+        "breakdown": breakdown,
+    })

@@ -55,3 +55,4 @@ If this was not you, please contact support.
         recipient_list=[user.email],
         fail_silently=False
     )
+

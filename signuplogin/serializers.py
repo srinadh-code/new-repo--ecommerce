@@ -78,3 +78,14 @@ class ResetPasswordSerializer(serializers.Serializer):
         if not any(ch in value for ch in special_chars):
             raise serializers.ValidationError("Weak password. any special characters")
         return value
+from rest_framework import serializers
+from .models import Product
+from reviews.serializers import ReviewSerializer
+
+
+class ProductDetailSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        fields = '__all__'

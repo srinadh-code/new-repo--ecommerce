@@ -38,6 +38,11 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to="products/", blank=True, null=True)
+    description = models.TextField()
+    specifications = models.JSONField(blank=True, null=True)
+
+    average_rating = models.FloatField(default=0)
+    total_reviews = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
