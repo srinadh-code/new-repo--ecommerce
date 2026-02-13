@@ -197,6 +197,11 @@ class ResetPasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
 def splash_page(request):
     return render(request, "splash.html")
 
@@ -247,7 +252,7 @@ def dashboard_page(request):
         .filter(cart_count__lte=1, wishlist_count__lte=1)
         .order_by("?")[:4]
     )
-      # -------- RECENTLY VIEWED --------
+      #  RECENTLY VIEWED 
     recent_ids = request.session.get("recently_viewed", [])
     recently_viewed_products = Product.objects.filter(id__in=recent_ids)
 
@@ -281,9 +286,11 @@ def set_language(request):
 def my_orders(request):
     return render(request, "my_orders.html")
 
-def logout_view(request):
-    logout(request)
-    return redirect("login")
+
+
+
+
+
 
 @login_required
 def my_addresses(request):

@@ -99,7 +99,7 @@
         .dropdown-menu hr{
             margin:6px 0;
             border:none;
-            border-top:1px solid #eee;
+            border-top:1px solid #111010;
         }
 
         /* ================= MAIN ================= */
@@ -120,7 +120,7 @@
         }
 
         .cat-card{
-            background:linear-gradient(180deg, #ffffff, #fff6f2);
+            background:linear-gradient(180deg, #cb1717, #e9510f);
             border-radius:20px;
             padding:22px 14px;
             text-align:center;
@@ -255,6 +255,55 @@
     font-size:16px;
     font-weight:700;
 }
+.carousel{
+    overflow:hidden;
+    position:relative;
+    margin-top:25px;
+}
+
+.carousel-track{
+    display:flex;
+    gap:30px;
+    width:max-content;
+    animation:scroll 25s linear infinite;
+}
+
+.carousel:hover .carousel-track{
+    animation-play-state:paused;
+}
+
+@keyframes scroll{
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(-50%);
+    }
+}
+
+.cat-card{
+    min-width:200px;
+    background:linear-gradient(135deg, #efd6ea, #d8eaf0);
+    border-radius:20px;
+    padding:22px 14px;
+    text-align:center;
+    box-shadow:0 8px 18px rgba(0,0,0,0.12);
+    transition:0.3s ease;
+}
+
+.cat-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 18px 34px rgba(236,81,207,0.35);
+}
+
+.cat-card img{
+    width:110px;
+    height:110px;
+    object-fit:contain;
+    margin-bottom:12px;
+    filter:drop-shadow(0 8px 14px rgba(0,0,0,0.15));
+}
+
 
     </style>
 </head>
@@ -270,9 +319,9 @@
     </form>
 
     <div class="header-right">
-        <a href="/cart/view/" class="btn-link">🛒 Cart ({{ cart_count }})</a>
+        {% comment %} <a href="/cart/view/" class="btn-link">🛒 Cart ({{ cart_count }})</a>
         <a href="{% url 'wishlist' %}" class="btn-link">❤️ Wishlist ({{ wishlist_count }})</a>
-        <a href="{% url 'settings' %}" class="btn-link">⚙ Settings</a>
+        <a href="{% url 'settings' %}" class="btn-link">⚙ Settings</a> {% endcomment %}
 
         {% if request.user.is_authenticated %}
         <div class="user-dropdown">
@@ -297,7 +346,7 @@
 </div>
 
 <!-- ================= CATEGORIES ================= -->
-<div class="container">
+{% comment %} <div class="container">
     <h2>Categories</h2>
     <div class="categories">
         {% for cat in categories %}
@@ -309,7 +358,36 @@
         </a>
         {% endfor %}
     </div>
+</div> {% endcomment %}
+<div class="container">
+    <h2>Categories</h2>
+
+    <div class="carousel">
+        <div class="carousel-track">
+
+            {% for cat in categories %}
+            <a href="{% url 'category_products' cat.id %}">
+                <div class="cat-card">
+                    <img src="{{ cat.image.url }}">
+                    <p>{{ cat.name }}</p>
+                </div>
+            </a>
+            {% endfor %}
+
+            <!-- Duplicate for infinite effect -->
+            {% for cat in categories %}
+            <a href="{% url 'category_products' cat.id %}">
+                <div class="cat-card">
+                    <img src="{{ cat.image.url }}">
+                    <p>{{ cat.name }}</p>
+                </div>
+            </a>
+            {% endfor %}
+
+        </div>
+    </div>
 </div>
+
 
 <!-- ================= TRENDING + RECOMMENDED ================= -->
 <div class="dashboard-sections">

@@ -1,9 +1,10 @@
 from django.contrib import admin
 from .models import Banner
-from .models import Category, Product
+from .models import Category, Product,SubCategory
 @admin.register(Banner)
 class BannerAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "is_active")
 
 admin.site.register(Category)
 admin.site.register(Product)
+admin.site.register(SubCategory)

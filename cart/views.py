@@ -6,7 +6,12 @@ from signuplogin.models import Product,Category
 from .models import CartItem, Order, OrderItem
 from cart.models import Wishlist
 from django.db.models import Q
+from .models import Wishlist, CartItem
+from cart.models import Wishlist
 from signuplogin.models import Product, Category
+
+from django.db.models import Q
+from signuplogin.models import Category, SubCategory, Product
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -19,9 +24,6 @@ def add_to_cart(request, product_id):
     if not created:
         cart_item.quantity += 1
     cart_item.save()
-  
-
-
     return redirect("view_cart")
 @login_required
 def view_cart(request):
@@ -204,7 +206,7 @@ def product_detail(request, product_id):
         "in_wishlist": in_wishlist
     })
 
-from .models import Wishlist, CartItem
+
 
 def cart_wishlist_counts(request):
     if request.user.is_authenticated:
@@ -216,7 +218,7 @@ def cart_wishlist_counts(request):
         "cart_count": 0,
         "wishlist_count": 0,
     }
-from cart.models import Wishlist
+
 
 def category_products(request, cat_id):
     category = Category.objects.get(id=cat_id)
@@ -236,18 +238,44 @@ def category_products(request, cat_id):
 
 
 def search_view(request):
-    query = request.GET.get("q", "")
+    query = request.GET.get("q", "").strip()
 
-    products = Product.objects.filter(
-        Q(name__icontains=query)
-    )
+    # Check if query matches a Category
+    category = Category.objects.filter(name__icontains=query).first()
 
-    categories = Category.objects.filter(
-        Q(name__icontains=query)
-    )
+    if category:
+        subcategories = SubCategory.objects.filter(category=category)
+
+        return render(request, "search_results.html", {
+            "query": query,
+            "subcategories": subcategories,
+            "show_subcategories": True
+        })
+
+    # Otherwise normal product search
+    products = Product.objects.select_related(
+        "category", "subcategory"
+    ).filter(
+        Q(name__icontains=query) |
+        Q(subcategory__name__icontains=query)
+    ).distinct()
 
     return render(request, "search_results.html", {
         "query": query,
         "products": products,
-        "categories": categories
+        "show_subcategories": False
+    })
+
+#     })
+def subcategory_products(request, sub_id):
+    subcategory = SubCategory.objects.get(id=sub_id)
+
+    products = Product.objects.filter(
+        subcategory=subcategory
+    ).select_related("category", "subcategory")
+
+    return render(request, "search_results.html", {
+        "query": subcategory.name,
+        "products": products,
+        "show_subcategories": False
     })

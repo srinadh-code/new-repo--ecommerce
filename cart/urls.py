@@ -13,7 +13,7 @@ urlpatterns = [
     #  Buy 
     path("search/", search_view, name="search"),
     
-
+    
     # path("product/<int:product_id>/", views.product_detail, name="product_detail"),
     path("buy/<int:product_id>/", views.place_order_single, name="place_order_single"),
     path("order-success/<int:order_id>/", views.order_success, name="order_success"),
@@ -23,5 +23,6 @@ urlpatterns = [
     path("wishlist/remove/<int:product_id>/", remove_from_wishlist, name="remove_from_wishlist"),
     path("wishlist/move-to-cart/<int:product_id>/", wishlist_to_cart, name="wishlist_to_cart"),
     path("wishlist/toggle/<int:product_id>/", toggle_wishlist, name="toggle_wishlist"),
+    path("subcategory/<int:sub_id>/", views.subcategory_products, name="subcategory_products")
 
 ]
